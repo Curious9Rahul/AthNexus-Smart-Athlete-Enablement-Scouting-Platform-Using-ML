@@ -15,7 +15,7 @@ import Dashboard from './pages/Dashboard';
 
 // Main content component that uses auth context
 function MainContent() {
-  const { isAuthenticated, hasProfile } = useAuth();
+  const { isAuthenticated, hasProfile, logout } = useAuth();
   const [currentView, setCurrentView] = useState<'landing' | 'auth' | 'profile'>('landing');
 
   // Handle auth state changes
@@ -36,6 +36,12 @@ function MainContent() {
     setCurrentView('landing');
   };
 
+  const handleProfileCancel = () => {
+    // User cancelled profile creation, logout and return to auth
+    logout();
+    setCurrentView('auth');
+  };
+
   // Show auth page if user clicked sign in
   if (currentView === 'auth' && !isAuthenticated) {
     return <AuthPage onSuccess={handleAuthSuccess} onCancel={handleAuthCancel} />;
@@ -48,7 +54,7 @@ function MainContent() {
 
   // Show profile form if authenticated but no profile
   if (isAuthenticated && !hasProfile) {
-    return <ProfileForm onComplete={handleProfileComplete} />;
+    return <ProfileForm onComplete={handleProfileComplete} onBack={handleProfileCancel} />;
   }
 
   // Show landing page

@@ -1,0 +1,936 @@
+
+.athnexus-events-module {
+    color: #ffffff;
+    font-family: inherit;
+}
+.athnexus-events-module * {
+    box-sizing: border-box;
+}
+.athnexus-events-module .top-nav{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 247, 239, 0.82);
+  backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+}.athnexus-events-module .top-nav-inner{
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}.athnexus-events-module .brand{
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+}.athnexus-events-module .nav-links{
+  display: flex;
+  gap: 0.55rem;
+}.athnexus-events-module .nav-link{
+  text-decoration: none;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.42rem 0.8rem;
+  font-weight: 600;
+}.athnexus-events-module .nav-link.active{
+  color: #fff;
+  background: linear-gradient(120deg, #a3e635, #bef264);
+}.athnexus-events-module .event-page, .athnexus-events-module .admin-page, .athnexus-events-module .details-page{
+  position: relative;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 2rem 1.2rem 3rem;
+  overflow: hidden;
+}.athnexus-events-module .event-bg{
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  filter: blur(40px);
+}.athnexus-events-module .event-bg-one{
+  width: 340px;
+  height: 340px;
+  background: rgba(255, 120, 81, 0.26);
+  top: -140px;
+  left: -130px;
+}.athnexus-events-module .event-bg-two{
+  width: 420px;
+  height: 420px;
+  background: rgba(255, 183, 71, 0.22);
+  right: -120px;
+  top: 180px;
+}.athnexus-events-module .hero{
+  animation: riseIn 520ms ease-out both;
+}.athnexus-events-module .hero-kicker{
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  font-size: 0.76rem;
+  color: #ba4d12;
+}.athnexus-events-module .hero h1, .athnexus-events-module .admin-shell h1, .athnexus-events-module .details-shell h1{
+  margin: 0.35rem 0 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.02;
+}.athnexus-events-module .hero-subtitle{
+  max-width: 58ch;
+  margin: 0.7rem 0 0;
+  color: #4f4f5f;
+}.athnexus-events-module .hero-metrics{
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}.athnexus-events-module .metric-card{
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  min-width: 150px;
+}.athnexus-events-module .metric-label{
+  margin: 0;
+  font-size: 0.77rem;
+  color: #5f5f70;
+}.athnexus-events-module .metric-value{
+  margin: 0.1rem 0 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}.athnexus-events-module .filter-actions{
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  justify-content: space-between;
+}.athnexus-events-module .search-row{
+  margin-top: 1.35rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  justify-content: space-between;
+}.athnexus-events-module .search-input-shell{
+  width: min(560px, 100%);
+  display: grid;
+  gap: 0.34rem;
+}.athnexus-events-module .search-input-shell span{
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6a3a26;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}.athnexus-events-module .search-input-shell input{
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 0.62rem 0.74rem;
+  font: inherit;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}.athnexus-events-module .search-input-shell input:focus{
+  border-color: #ff8b5a;
+  box-shadow: 0 0 0 3px rgba(255, 139, 90, 0.2);
+}.athnexus-events-module .sport-type-icons{
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}.athnexus-events-module .participation-icons{
+  margin-top: 0.55rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}.athnexus-events-module .sport-type-icon{
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #ffffff;
+  padding: 0.54rem 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+}.athnexus-events-module .sport-type-icon:hover{
+  transform: translateY(-2px);
+}.athnexus-events-module .participation-icon{
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #ffffff;
+  padding: 0.54rem 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+}.athnexus-events-module .participation-icon:hover{
+  transform: translateY(-2px);
+}.athnexus-events-module .sport-type-icon.active{
+  background: linear-gradient(120deg, #a3e635, #bef264);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(255, 107, 61, 0.3);
+}.athnexus-events-module .participation-icon.active{
+  background: linear-gradient(120deg, #1f5e4b, #37a77f);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(31, 94, 75, 0.28);
+}.athnexus-events-module .sport-type-badge{
+  min-width: 36px;
+  border-radius: 999px;
+  padding: 0.2rem 0.4rem;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.82);
+  color: #613524;
+}.athnexus-events-module .sport-type-icon.active .sport-type-badge{
+  background: rgba(255, 255, 255, 0.9);
+}.athnexus-events-module .participation-icon.active .sport-type-badge{
+  background: rgba(255, 255, 255, 0.9);
+}.athnexus-events-module .search-filter-panel{
+  display: grid;
+  grid-template-columns: minmax(230px, 1.4fr) minmax(180px, 1fr);
+  gap: 0.65rem;
+  width: min(760px, 100%);
+  animation: riseIn 620ms ease-out both;
+}.athnexus-events-module .search-control{
+  display: grid;
+  gap: 0.34rem;
+}.athnexus-events-module .search-control span{
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6a3a26;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}.athnexus-events-module .search-control input, .athnexus-events-module .search-control select{
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 0.62rem 0.74rem;
+  font: inherit;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}.athnexus-events-module .search-control input:focus, .athnexus-events-module .search-control select:focus{
+  border-color: #ff8b5a;
+  box-shadow: 0 0 0 3px rgba(255, 139, 90, 0.2);
+}.athnexus-events-module .search-results-summary{
+  margin: 0.7rem 0 0;
+  font-size: 0.87rem;
+  color: #94a3b8;
+}.athnexus-events-module .filter-tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  animation: riseIn 620ms ease-out both;
+}.athnexus-events-module .filter-tab, .athnexus-events-module .suggest-btn{
+  border: none;
+  border-radius: 999px;
+  padding: 0.54rem 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}.athnexus-events-module .filter-tab:hover, .athnexus-events-module .suggest-btn:hover{
+  transform: translateY(-2px);
+}.athnexus-events-module .filter-tab.active, .athnexus-events-module .suggest-btn{
+  background: linear-gradient(120deg, #a3e635, #bef264);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(255, 107, 61, 0.33);
+}.athnexus-events-module .events-grid{
+  margin-top: 1.35rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}.athnexus-events-module .section-title{
+  margin: 1.5rem 0 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #a3e635;
+}.athnexus-events-module .live-carousel-section, .athnexus-events-module .deadline-section, .athnexus-events-module .all-events-section{
+  margin-top: 0.5rem;
+}.athnexus-events-module .level-group{
+  margin-top: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.64);
+  padding: 0.85rem;
+}.athnexus-events-module .level-group-title{
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1rem;
+  color: #4d2f24;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}.athnexus-events-module .game-type-columns{
+  margin-top: 0.65rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}.athnexus-events-module .game-type-title{
+  margin: 0;
+  font-size: 0.84rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6f3f2a;
+  font-weight: 700;
+}.athnexus-events-module .game-type-section .events-grid{
+  margin-top: 0.7rem;
+}.athnexus-events-module .live-carousel{
+  margin-top: 0.9rem;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.6);
+}.athnexus-events-module .live-track{
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}.athnexus-events-module .live-pill{
+  min-width: 260px;
+  border-radius: 14px;
+  background: linear-gradient(130deg, #ff7a47, #ff9f42);
+  color: #fff;
+  padding: 0.72rem 0.84rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 600;
+}.athnexus-events-module .live-pill span:last-child{
+  font-size: 0.86rem;
+  opacity: 0.92;
+}.athnexus-events-module .empty-state{
+  margin: 0.9rem 0;
+  color: #515161;
+  font-size: 0.92rem;
+}.athnexus-events-module .card-anim{
+  opacity: 0;
+  animation: liftIn 420ms ease forwards;
+}.athnexus-events-module .event-card{
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 14px 36px rgba(20, 20, 40, 0.12);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}.athnexus-events-module .event-card:hover{
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 22px 42px rgba(20, 20, 40, 0.16);
+}.athnexus-events-module .card-media{
+  min-height: 152px;
+  padding: 1rem;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}.athnexus-events-module .media-level{
+  margin: 0;
+  width: fit-content;
+  font-size: 0.73rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.34rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+}.athnexus-events-module .card-media h3{
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}.athnexus-events-module .card-content{
+  padding: 0.9rem 1rem 1rem;
+}.athnexus-events-module .card-tags{
+  display: flex;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}.athnexus-events-module .card-tags span{
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.3rem 0.58rem;
+  background: #ffe8d6;
+  color: #7a3618;
+  border-radius: 999px;
+}.athnexus-events-module .card-meta{
+  margin: 0;
+  color: #505063;
+  font-size: 0.91rem;
+}.athnexus-events-module .card-meta + .card-meta{
+  margin-top: 0.22rem;
+}.athnexus-events-module .card-time{
+  margin: 0.35rem 0 0;
+  color: #312337;
+  font-size: 0.95rem;
+  font-weight: 700;
+}.athnexus-events-module .save-btn{
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 0.64rem 0.9rem;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}.athnexus-events-module .save-btn:hover{
+  transform: translateY(-1px);
+}.athnexus-events-module .details-btn{
+  background: linear-gradient(120deg, #a3e635, #bef264);
+}.athnexus-events-module .request-btn{
+  background: #1f2433;
+}.athnexus-events-module .request-btn.requested{
+  background: #4f5d79;
+  cursor: not-allowed;
+}.athnexus-events-module .request-btn:disabled{
+  opacity: 0.9;
+}.athnexus-events-module .card-actions{
+  margin-top: 0.72rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+}.athnexus-events-module .card-actions .save-btn{
+  width: auto;
+  min-width: 190px;
+}.athnexus-events-module .level-logo{
+  width: 80px;
+  margin-bottom: 12px;
+  display: block;
+}.athnexus-events-module .modal-backdrop{
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(20, 24, 34, 0.54);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}.athnexus-events-module .modal-card{
+  width: min(700px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+  border-radius: 16px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+}.athnexus-events-module .modal-card h2{
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+}.athnexus-events-module .suggest-form{
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.7rem;
+}.athnexus-events-module .suggest-form label{
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}.athnexus-events-module .suggest-form input, .athnexus-events-module .suggest-form select, .athnexus-events-module .suggest-form textarea{
+  border: 1px solid #d3d5de;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+}.athnexus-events-module .suggest-form .invalid-field{
+  border-color: #d13737;
+  background: rgba(255, 255, 255, 0.05)6f6;
+}.athnexus-events-module .field-error{
+  font-size: 0.78rem;
+  color: #b42323;
+  line-height: 1.2;
+}.athnexus-events-module .time-row{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}.athnexus-events-module .upload-hint{
+  font-size: 0.8rem;
+  color: #39506b;
+}.athnexus-events-module .modal-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}.athnexus-events-module .primary-btn, .athnexus-events-module .secondary-btn, .athnexus-events-module .approve-btn, .athnexus-events-module .reject-btn, .athnexus-events-module .back-link{
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}.athnexus-events-module .primary-btn, .athnexus-events-module .approve-btn, .athnexus-events-module .back-link{
+  color: #fff;
+  background: #1f2433;
+}.athnexus-events-module .secondary-btn{
+  background: #eceef4;
+  color: #202532;
+}.athnexus-events-module .approve-btn{
+  background: #118a4a;
+}.athnexus-events-module .reject-btn{
+  background: #ba2e2e;
+  color: #fff;
+}.athnexus-events-module .admin-shell, .athnexus-events-module .details-shell{
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 14px 36px rgba(20, 20, 40, 0.1);
+  padding: 1rem;
+}.athnexus-events-module .admin-list{
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}.athnexus-events-module .admin-card{
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+}.athnexus-events-module .admin-card-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}.athnexus-events-module .admin-card-head p{
+  margin: 0;
+  font-weight: 700;
+}.athnexus-events-module .admin-meta{
+  margin: 0.45rem 0 0;
+  color: #4a4d59;
+}.athnexus-events-module .status-pill{
+  border-radius: 999px;
+  padding: 0.28rem 0.58rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}.athnexus-events-module .status-pill.pending{
+  background: #ffe8b5;
+  color: #6f4700;
+}.athnexus-events-module .status-pill.approved{
+  background: #d7f6e7;
+  color: #066136;
+}.athnexus-events-module .status-pill.rejected{
+  background: #ffd9d9;
+  color: #7e1717;
+}.athnexus-events-module .admin-actions{
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.55rem;
+}.athnexus-events-module .details-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}.athnexus-events-module .details-grid p{
+  margin: 0;
+}.athnexus-events-module .details-description{
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+}.athnexus-events-module .details-description h2{
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.06rem;
+}.athnexus-events-module .details-description p{
+  margin: 0.55rem 0 0;
+  line-height: 1.5;
+}.athnexus-events-module .brochure-frame{
+  margin-top: 0.65rem;
+  width: 100%;
+  height: 420px;
+  border: 1px solid #d7dae4;
+  border-radius: 10px;
+}.athnexus-events-module .back-link{
+  display: inline-block;
+  margin-top: 0.9rem;
+}.athnexus-events-module .details-remix-page{
+  max-width: 1220px;
+}.athnexus-events-module .details-remix-shell{
+  padding: 0;
+  overflow: hidden;
+}.athnexus-events-module .details-top-strip{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #e8e8ee;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255, 255, 255, 0.9);
+}.athnexus-events-module .details-back-link{
+  margin: 0;
+}.athnexus-events-module .details-anchor-tabs{
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}.athnexus-events-module .details-anchor-tabs a{
+  text-decoration: none;
+  color: #2f3542;
+  border-radius: 999px;
+  padding: 0.46rem 0.82rem;
+  font-weight: 600;
+  border: 1px solid #e9ebf3;
+  background: rgba(255, 255, 255, 0.05);
+}.athnexus-events-module .details-anchor-tabs a:hover{
+  border-color: #d11d2f;
+  color: #d11d2f;
+}.athnexus-events-module .details-hero-card{
+  margin: 1rem 1.1rem 0;
+  border: 1px solid #e8e8ee;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 1rem;
+}.athnexus-events-module .details-level-kicker{
+  margin: 0;
+  font-weight: 700;
+  color: #ce1a2f;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}.athnexus-events-module .details-hero-main h1{
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+}.athnexus-events-module .details-organizer{
+  margin: 0.45rem 0 0;
+  color: #51576a;
+  font-size: 1.06rem;
+}.athnexus-events-module .details-team-info{
+  margin-top: 1rem;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: 1px solid #ececf2;
+  border-radius: 14px;
+  padding: 0.65rem 0.8rem;
+  background: #fbfbfe;
+}.athnexus-events-module .details-team-info p{
+  margin: 0;
+  color: #5b6070;
+  font-size: 0.86rem;
+  font-weight: 600;
+}.athnexus-events-module .details-team-info strong{
+  font-size: 1rem;
+}.athnexus-events-module .details-category-pills{
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}.athnexus-events-module .details-category-pills span{
+  border-radius: 999px;
+  background: #f2f4f8;
+  padding: 0.36rem 0.75rem;
+  color: #2a3040;
+  font-weight: 600;
+  font-size: 0.88rem;
+}.athnexus-events-module .details-hashtags{
+  margin: 0.85rem 0 0;
+  color: #5c6374;
+  font-size: 0.92rem;
+}.athnexus-events-module .details-hero-side{
+  border: 1px solid #efeff4;
+  border-radius: 14px;
+  padding: 0.8rem;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  justify-content: center;
+}.athnexus-events-module .status-chip{
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.34rem 0.72rem;
+  font-weight: 700;
+  background: #d8f6e8;
+  color: #0e7d46;
+}.athnexus-events-module .date-chip, .athnexus-events-module .time-chip{
+  margin: 0;
+  font-weight: 700;
+  color: #2a2f3d;
+}.athnexus-events-module .details-block{
+  margin: 1rem 1.1rem 0;
+  border: 1px solid #e8e8ee;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  scroll-margin-top: 1rem;
+}.athnexus-events-module .details-block h2{
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.7rem;
+  line-height: 1.1;
+}.athnexus-events-module .details-eligibility-block h2{
+  font-size: 1.55rem;
+}.athnexus-events-module .details-block p{
+  margin: 0.75rem 0 0;
+  color: #383f52;
+  line-height: 1.62;
+}.athnexus-events-module .details-block h3{
+  margin: 1rem 0 0;
+  font-size: 1.16rem;
+}.athnexus-events-module .details-block ul{
+  margin: 0.7rem 0 0;
+  padding-left: 1.2rem;
+}.athnexus-events-module .details-block li{
+  margin: 0.45rem 0 0;
+  line-height: 1.5;
+  color: #33394a;
+}.athnexus-events-module .submission-grid{
+  margin-top: 0.95rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}.athnexus-events-module .submission-card{
+  border: 1px solid #ececf2;
+  border-radius: 14px;
+  padding: 0.85rem;
+  background: #fbfcff;
+}.athnexus-events-module .submission-card h3{
+  margin: 0;
+  font-size: 1rem;
+}.athnexus-events-module .submission-card p{
+  margin: 0.4rem 0 0;
+  font-weight: 600;
+  color: #262d3d;
+}.athnexus-events-module .timeline-list{
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 1rem;
+}.athnexus-events-module .timeline-item{
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 0.9rem;
+  position: relative;
+}.athnexus-events-module .timeline-item::before{
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 54px;
+  bottom: -14px;
+  border-left: 1px dashed #cf3b4a;
+}.athnexus-events-module .timeline-item:last-child::before{
+  display: none;
+}.athnexus-events-module .timeline-date-badge{
+  width: 50px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #0a6ac3 0%, #2f85d1 100%);
+  color: #fff;
+  text-align: center;
+  padding: 0.38rem 0.2rem;
+  height: fit-content;
+}.athnexus-events-module .timeline-date-badge strong{
+  display: block;
+  font-size: 1.35rem;
+  line-height: 1;
+}.athnexus-events-module .timeline-date-badge span{
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 0.83rem;
+}.athnexus-events-module .timeline-content{
+  min-width: 0;
+}.athnexus-events-module .timeline-range{
+  margin: 0;
+  color: #4a5266;
+  font-weight: 600;
+}.athnexus-events-module .timeline-card{
+  margin-top: 0.5rem;
+  border: 1px solid #ececf2;
+  border-radius: 16px;
+  background: #fbfcff;
+  padding: 0.95rem;
+}.athnexus-events-module .timeline-card h3{
+  margin: 0;
+  font-size: 1.28rem;
+}.athnexus-events-module .timeline-card p{
+  margin: 0.55rem 0 0;
+}.athnexus-events-module @keyframes riseIn{
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}.athnexus-events-module @keyframes liftIn{
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}.athnexus-events-module @keyframes marquee{
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}.athnexus-events-module @media (max-width: 740px){
+  .top-nav-inner,
+  .event-page,
+  .admin-page,
+  .details-page {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+  }
+
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-shell {
+    width: 100%;
+  }
+
+  .search-filter-panel {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-type-columns {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .live-pill {
+    min-width: 220px;
+  }
+
+  .time-row {
+    grid-template-columns: 1fr;
+  }
+
+  .details-top-strip {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-anchor-tabs {
+    justify-content: flex-start;
+  }
+
+  .details-hero-card {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    margin: 0.9rem 0.85rem 0;
+  }
+
+  .details-block {
+    margin: 0.9rem 0.85rem 0;
+  }
+
+  .details-block h2 {
+    font-size: 1.45rem;
+  }
+
+  .timeline-item {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 0.7rem;
+  }
+
+  .timeline-item::before {
+    left: 24px;
+  }
+
+  .timeline-date-badge {
+    width: 42px;
+  }
+
+  .timeline-date-badge strong {
+    font-size: 1.1rem;
+  }
+}
+
+/* Premium Effects */
+.athnexus-events-module .event-card {
+    background: rgba(15, 23, 42, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(12px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.athnexus-events-module .event-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(163, 230, 53, 0.3) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(163, 230, 53, 0.1) !important;
+}
+
+.athnexus-events-module .metric-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 16px !important;
+    padding: 1.25rem !important;
+}
+
+.athnexus-events-module .hero h1 {
+    letter-spacing: -0.02em !important;
+    font-weight: 800 !important;
+    background: linear-gradient(to bottom right, #fff 50%, #94a3b8) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.athnexus-events-module .suggest-btn {
+    background: #a3e635 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px rgba(163, 230, 53, 0.3) !important;
+}
+
+.athnexus-events-module .suggest-btn:hover {
+    background: #bef264 !important;
+    box-shadow: 0 6px 20px rgba(163, 230, 53, 0.4) !important;
+}
+
+.athnexus-events-module .search-input-shell input {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    transition: all 0.2s !important;
+}
+
+.athnexus-events-module .search-input-shell input:focus {
+    border-color: #a3e635 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.1) !important;
+}
+
+.athnexus-events-module .filter-tab.active {
+    background: #a3e635 !important;
+    color: #0f172a !important;
+}
+
+.athnexus-events-module .details-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.athnexus-events-module .details-btn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}

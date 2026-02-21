@@ -26,6 +26,7 @@ const DUMMY_CREDENTIALS = [
 export interface UserProfile {
     // Personal Information
     name: string;
+    profileImage?: string; // Optional profile image URL or base64
     gender: 'Male' | 'Female' | 'Other' | '';
     age: number | '';
     height_cm: number | '';
@@ -78,6 +79,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Dummy profile for player1 bypass
+const DUMMY_PROFILES: Record<string, UserProfile> = {
+    'player1@athnexus.com': {
+        name: 'Alex Johnson',
+        profileImage: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&h=256&auto=format&fit=crop',
+        gender: 'Male',
+        age: 21,
+        height_cm: 185,
+        weight_kg: 82,
+        bmi: 24.0,
+        department: 'Sports Science',
+        year: '3rd Year',
+        sport: 'Basketball',
+        position: 'Forward',
+        experienceYears: 5,
+        competitionLevel: 'Advanced',
+        tournamentsPlayed: 12,
+        matchesWon: 45,
+        medalsWon: 3,
+        activeStatus: 'Active',
+        perceivedSkill: 8,
+        achievementScore: 85,
+        participationScore: 90,
+        activityScore: 75,
+        fitnessIndex: 88,
+        talentScore: 82,
+        sprint_100m: 11.5,
+        pushups: 60,
+        plank_sec: 180,
+        run_1km: 3.5,
+    }
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Load user from localStorage on mount
     const [user, setUser] = useState<User | null>(() => {
@@ -109,8 +143,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (savedData && savedData.email === matchedUser.email) {
                 setUser(savedData);
             } else {
-                // New login, create user with no profile
-                setUser({ email: matchedUser.email, profile: null });
+                // New login
+                // Special bypass for player1: assign dummy profile automatically
+                if (DUMMY_PROFILES[matchedUser.email]) {
+                    setUser({
+                        email: matchedUser.email,
+                        profile: DUMMY_PROFILES[matchedUser.email]
+                    });
+                } else {
+                    // Other users start with no profile
+                    setUser({ email: matchedUser.email, profile: null });
+                }
             }
             return true;
         }

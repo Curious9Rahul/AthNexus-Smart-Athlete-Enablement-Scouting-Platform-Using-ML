@@ -6,8 +6,9 @@ import Events from './dashboard/Events';
 import MyEvents from './dashboard/MyEvents';
 import Analytics from './dashboard/Analytics';
 import ProfileForm from './ProfileForm';
+import ProfileView from './ProfileView';
 
-type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile';
+type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile' | 'profile-edit';
 
 const Dashboard = () => {
     const [activeView, setActiveView] = useState<DashboardView>('overview');
@@ -23,7 +24,12 @@ const Dashboard = () => {
             case 'analytics':
                 return <Analytics />;
             case 'profile':
-                return <ProfileForm onComplete={() => setActiveView('overview')} />;
+                return <ProfileView
+                    onBack={() => setActiveView('overview')}
+                    onEdit={() => setActiveView('profile-edit')}
+                />;
+            case 'profile-edit':
+                return <ProfileForm onComplete={() => setActiveView('profile')} />;
             default:
                 return <Overview onNavigate={setActiveView} />;
         }

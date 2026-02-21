@@ -2,7 +2,7 @@ import { Calendar, Trophy, TrendingUp, Zap, Award } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 
-type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile';
+type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile' | 'profile-edit';
 
 interface OverviewProps {
     onNavigate: (view: DashboardView) => void;

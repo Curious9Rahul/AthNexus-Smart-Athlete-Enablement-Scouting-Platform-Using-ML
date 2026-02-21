@@ -125,3 +125,36 @@
 .animate-slide-up {
   animation: slide-up 0.6s ease-out forwards;
 }
+
+/* Force dark theme for all select dropdowns */
+select {
+  color-scheme: dark !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+select option {
+  background-color: #1e293b !important;
+  color: white !important;
+}
+
+select option:checked,
+select option:hover {
+  background-color: #334155 !important;
+  color: #bef264 !important;
+}
+
+/* Webkit-specific styling for select scrollbar */
+select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+select::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}

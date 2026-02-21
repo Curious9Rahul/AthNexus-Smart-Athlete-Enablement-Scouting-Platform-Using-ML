@@ -2,7 +2,7 @@
 import { Home, Calendar, Trophy, BarChart3, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile';
+type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile' | 'profile-edit';
 
 interface DashboardSidebarProps {
     activeView: DashboardView;

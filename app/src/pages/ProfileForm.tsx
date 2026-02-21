@@ -7,16 +7,18 @@ import { CheckCircle2, User, Trophy, Activity, Zap } from 'lucide-react';
 
 interface ProfileFormProps {
     onComplete: () => void;
+    onBack?: () => void;
 }
 
-const ProfileForm = ({ onComplete }: ProfileFormProps) => {
-    const { updateProfile } = useAuth();
+const ProfileForm = ({ onComplete, onBack }: ProfileFormProps) => {
+    const { updateProfile, logout } = useAuth();
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 4;
 
     // Form state
     const [formData, setFormData] = useState<UserProfile>({
         name: '',
+        profileImage: '',
         gender: '',
         age: '',
         height_cm: '',
@@ -96,10 +98,18 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
 
                     {/* Back/Cancel Button */}
                     <button
-                        onClick={onComplete}
+                        onClick={() => {
+                            if (window.confirm('Are you sure you want to cancel? You will be logged out and your current progress will be lost.')) {
+                                if (onBack) {
+                                    onBack();
+                                } else {
+                                    logout();
+                                }
+                            }
+                        }}
                         className="absolute top-0 right-0 text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
                     >
-                        <span>← Back</span>
+                        <span>← Cancel</span>
                     </button>
                 </div>
 
@@ -160,6 +170,17 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         />
                                     </div>
 
+                                    <div className="md:col-span-2">
+                                        <Label htmlFor="profileImage" className="text-white mb-2 block">Profile Image URL (Optional)</Label>
+                                        <Input
+                                            id="profileImage"
+                                            value={formData.profileImage || ''}
+                                            onChange={(e) => handleChange('profileImage', e.target.value)}
+                                            placeholder="Enter image URL or leave blank for default avatar"
+                                            className="bg-white/5 border-white/10 text-white"
+                                        />
+                                    </div>
+
                                     <div>
                                         <Label htmlFor="gender" className="text-white mb-2 block">Gender *</Label>
                                         <select
@@ -181,6 +202,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="age"
                                             type="number"
+                                            min="10"
+                                            max="100"
                                             value={formData.age}
                                             onChange={(e) => handleChange('age', e.target.value)}
                                             className="bg-white/5 border-white/10 text-white"
@@ -193,6 +216,9 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="height"
                                             type="number"
+                                            min="100"
+                                            max="250"
+                                            step="0.1"
                                             value={formData.height_cm}
                                             onChange={(e) => handleChange('height_cm', e.target.value)}
                                             className="bg-white/5 border-white/10 text-white"
@@ -205,6 +231,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="weight"
                                             type="number"
+                                            min="20"
+                                            max="300"
                                             step="0.1"
                                             value={formData.weight_kg}
                                             onChange={(e) => handleChange('weight_kg', e.target.value)}
@@ -289,6 +317,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="experience"
                                             type="number"
+                                            min="0"
+                                            max="80"
                                             value={formData.experienceYears}
                                             onChange={(e) => handleChange('experienceYears', e.target.value)}
                                             className="bg-white/5 border-white/10 text-white"
@@ -318,6 +348,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="tournaments"
                                             type="number"
+                                            min="0"
+                                            max="10000"
                                             value={formData.tournamentsPlayed}
                                             onChange={(e) => handleChange('tournamentsPlayed', e.target.value)}
                                             className="bg-white/5 border-white/10 text-white"
@@ -329,6 +361,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="matches"
                                             type="number"
+                                            min="0"
+                                            max="10000"
                                             value={formData.matchesWon}
                                             onChange={(e) => handleChange('matchesWon', e.target.value)}
                                             className="bg-white/5 border-white/10 text-white"
@@ -340,6 +374,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="medals"
                                             type="number"
+                                            min="0"
+                                            max="1000"
                                             value={formData.medalsWon}
                                             onChange={(e) => handleChange('medalsWon', e.target.value)}
                                             className="bg-white/5 border-white/10 text-white"
@@ -475,6 +511,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="sprint"
                                             type="number"
+                                            min="5"
+                                            max="30"
                                             step="0.01"
                                             value={formData.sprint_100m}
                                             onChange={(e) => handleChange('sprint_100m', e.target.value)}
@@ -488,6 +526,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="pushups"
                                             type="number"
+                                            min="0"
+                                            max="500"
                                             value={formData.pushups}
                                             onChange={(e) => handleChange('pushups', e.target.value)}
                                             placeholder="e.g., 50"
@@ -500,6 +540,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="plank"
                                             type="number"
+                                            min="0"
+                                            max="3600"
                                             value={formData.plank_sec}
                                             onChange={(e) => handleChange('plank_sec', e.target.value)}
                                             placeholder="e.g., 120"
@@ -512,6 +554,8 @@ const ProfileForm = ({ onComplete }: ProfileFormProps) => {
                                         <Input
                                             id="run"
                                             type="number"
+                                            min="2"
+                                            max="15"
                                             step="0.01"
                                             value={formData.run_1km}
                                             onChange={(e) => handleChange('run_1km', e.target.value)}
