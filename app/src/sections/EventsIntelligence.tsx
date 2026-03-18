@@ -1,108 +1,223 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Users, Trophy, Filter, ArrowRight, Clock } from 'lucide-react';
+import { duoSports, soloSports, teamSports } from '@/pages/dashboard/events/data/sportsCatalog';
+import { events as allEvents } from '@/pages/dashboard/events/data/events';
+import { ArrowRight, Calendar, Clock3, Filter, MapPin, Trophy, Users } from 'lucide-react';
 
-const EventsIntelligence = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
+type EventsIntelligenceProps = {
+  onSignInClick?: () => void;
+};
 
-  const filters = [
-    { id: 'all', label: 'All Events' },
-    { id: 'inter-college', label: 'Inter-College' },
-    { id: 'zonal', label: 'Zonal' },
-    { id: 'state', label: 'State' },
-    { id: 'national', label: 'National' },
-  ];
+type LandingFilter = 'all' | 'inter-college' | 'zonal' | 'state' | 'national';
 
-  const events = [
-    {
-      name: 'Ojus Sports 2K26',
-      level: 'Inter-College',
-      type: 'Team',
-      gender: 'Mixed',
-      date: 'Feb 15-20, 2026',
-      venue: 'College Ground',
-      players: 120,
-      status: 'Upcoming',
-      sports: ['Cricket', 'Football', 'Basketball'],
-    },
-    {
-      name: 'Mumbai University Cricket',
-      level: 'Zonal',
-      type: 'Team',
-      gender: 'Boys',
-      date: 'Mar 5-12, 2026',
-      venue: 'University Stadium',
-      players: 84,
-      status: 'Registration Open',
-      sports: ['Cricket'],
-    },
-    {
-      name: 'Maharashtra State Athletics',
-      level: 'State',
-      type: 'Solo',
-      gender: 'Mixed',
-      date: 'Apr 1-5, 2026',
-      venue: 'State Sports Complex',
-      players: 200,
-      status: 'Coming Soon',
-      sports: ['Athletics'],
-    },
-    {
-      name: 'Khelo India Youth Games',
-      level: 'National',
-      type: 'Mixed',
-      gender: 'Mixed',
-      date: 'May 10-25, 2026',
-      venue: 'Multiple Venues',
-      players: 500,
-      status: 'Coming Soon',
-      sports: ['Multiple Sports'],
-    },
-  ];
+const filters: { id: LandingFilter; label: string }[] = [
+  { id: 'all', label: 'All Events' },
+  { id: 'inter-college', label: 'Inter-College' },
+  { id: 'zonal', label: 'Zonal' },
+  { id: 'state', label: 'State' },
+  { id: 'national', label: 'National' },
+];
 
-  const teamSports = ['Football', 'Cricket', 'Kabaddi', 'Volleyball', 'Basketball', 'Hockey'];
-  const soloSports = ['Athletics', 'Badminton', 'Table Tennis', 'Chess', 'Swimming', 'Boxing'];
+const dateLabelFormatter = new Intl.DateTimeFormat('en-IN', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
+const monthDayFormatter = new Intl.DateTimeFormat('en-IN', {
+  day: 'numeric',
+  month: 'short',
+});
+
+const monthDayYearFormatter = new Intl.DateTimeFormat('en-IN', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
+const normalizeFilterLevel = (level: string): LandingFilter => {
+  if (level === 'District' || level === 'Interclg') {
+    return 'inter-college';
+  }
+
+  if (level === 'Mumbai University') {
+    return 'zonal';
+  }
+
+  if (level === 'State') {
+    return 'state';
+  }
+
+  return 'national';
+};
+
+const getParticipationType = (sport: string) => {
+  if (teamSports.has(sport)) {
+    return 'Team';
+  }
+
+  if (duoSports.has(sport)) {
+    return 'Duo';
+  }
+
+  return soloSports.has(sport) ? 'Solo' : 'Open';
+};
+
+const formatDateRange = (startDateText: string, endDateText?: string) => {
+  const startDate = new Date(`${startDateText}T00:00:00`);
+  const endDate = new Date(`${(endDateText ?? startDateText)}T00:00:00`);
+
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return startDateText;
+  }
+
+  if (startDateText === endDateText) {
+    return dateLabelFormatter.format(startDate);
+  }
+
+  const sameYear = startDate.getFullYear() === endDate.getFullYear();
+  const sameMonth = sameYear && startDate.getMonth() === endDate.getMonth();
+
+  if (sameMonth) {
+    return `${monthDayFormatter.format(startDate)} - ${monthDayYearFormatter.format(endDate)}`;
+  }
+
+  if (sameYear) {
+    return `${monthDayFormatter.format(startDate)} - ${monthDayYearFormatter.format(endDate)}`;
+  }
+
+  return `${dateLabelFormatter.format(startDate)} - ${dateLabelFormatter.format(endDate)}`;
+};
+
+const getEventStatus = (submissionDeadline?: string, startDateText?: string, endDateText?: string) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const startDate = new Date(`${(startDateText ?? '')}T00:00:00`);
+  const endDate = new Date(`${(endDateText ?? startDateText ?? '')}T23:59:59`);
+  const deadlineDate = submissionDeadline ? new Date(`${submissionDeadline}T23:59:59`) : null;
+
+  if (!Number.isNaN(startDate.getTime()) && !Number.isNaN(endDate.getTime()) && today >= startDate && today <= endDate) {
+    return 'Live';
+  }
+
+  if (deadlineDate && !Number.isNaN(deadlineDate.getTime()) && today <= deadlineDate) {
+    return 'Registration Open';
+  }
+
+  if (!Number.isNaN(startDate.getTime()) && today < startDate) {
+    return 'Upcoming';
+  }
+
+  return 'Completed';
+};
+
+const getStatusClasses = (status: string) => {
+  if (status === 'Live') {
+    return 'bg-emerald-500/15 text-emerald-300 border border-emerald-400/20';
+  }
+
+  if (status === 'Registration Open') {
+    return 'bg-sky-500/15 text-sky-300 border border-sky-400/20';
+  }
+
+  if (status === 'Upcoming') {
+    return 'bg-amber-500/15 text-amber-300 border border-amber-400/20';
+  }
+
+  return 'bg-white/10 text-gray-300 border border-white/10';
+};
+
+const EventsIntelligence = ({ onSignInClick }: EventsIntelligenceProps) => {
+  const [activeFilter, setActiveFilter] = useState<LandingFilter>('all');
+
+  const upcomingEvents = useMemo(
+    () =>
+      allEvents
+        .filter((event) => getEventStatus(event.submissionDeadline, event.date, event.tournamentEndDate) !== 'Completed')
+        .sort((first, second) => first.date.localeCompare(second.date)),
+    []
+  );
+
+  const filteredEvents = useMemo(() => {
+    const scopedEvents =
+      activeFilter === 'all'
+        ? upcomingEvents
+        : upcomingEvents.filter((event) => normalizeFilterLevel(event.level) === activeFilter);
+
+    return scopedEvents.slice(0, 6);
+  }, [activeFilter, upcomingEvents]);
+
+  const featuredSports = useMemo(() => {
+    const visibleEvents = activeFilter === 'all'
+      ? upcomingEvents
+      : upcomingEvents.filter((event) => normalizeFilterLevel(event.level) === activeFilter);
+
+    const uniqueSports = Array.from(new Set(visibleEvents.map((event) => event.sport)));
+
+    return {
+      team: uniqueSports.filter((sport) => teamSports.has(sport)).slice(0, 8),
+      solo: uniqueSports.filter((sport) => soloSports.has(sport)).slice(0, 8),
+    };
+  }, [activeFilter, upcomingEvents]);
+
+  const liveCount = useMemo(
+    () => upcomingEvents.filter((event) => getEventStatus(event.submissionDeadline, event.date, event.tournamentEndDate) === 'Live').length,
+    [upcomingEvents]
+  );
 
   return (
-    <section id="events" className="relative py-24 bg-[#0f172a]">
-      {/* Background decoration */}
+    <section id="events" className="relative overflow-hidden bg-[#0f172a] py-24">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute left-1/2 top-0 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-lime-400/5 blur-3xl" />
+        <div className="absolute right-0 top-24 h-72 w-72 rounded-full bg-cyan-400/5 blur-3xl" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
-              <Calendar className="w-4 h-4 text-purple-400" />
-              <span className="text-purple-400 text-sm font-medium">Events Intelligence</span>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-lime-400/20 bg-lime-400/10 px-4 py-2">
+              <Calendar className="h-4 w-4 text-lime-300" />
+              <span className="text-sm font-medium text-lime-300">Events Intelligence</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-              Smart <span className="text-lime-400">Event Management</span>
+            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+              Live event pipeline for the <span className="text-lime-400">main site</span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl">
-              Discover, filter, and participate in events across all levels. 
-              From inter-college to national competitions.
+            <p className="max-w-2xl text-lg text-slate-300">
+              The landing page now pulls from the same event dataset used inside the athlete dashboard, so visitors see real upcoming competitions instead of static placeholders.
             </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+              <p className="text-sm text-slate-400">Upcoming</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{upcomingEvents.length}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+              <p className="text-sm text-slate-400">Live Now</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{liveCount}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm col-span-2 sm:col-span-1">
+              <p className="text-sm text-slate-400">Sports Covered</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{new Set(upcomingEvents.map((event) => event.sport)).size}</p>
+            </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <div className="flex items-center gap-2 mr-4">
-            <Filter className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-400 text-sm">Filter by:</span>
+        <div className="mb-8 flex flex-wrap gap-2">
+          <div className="mr-4 flex items-center gap-2">
+            <Filter className="h-4 w-4 text-slate-400" />
+            <span className="text-sm text-slate-400">Filter by level</span>
           </div>
           {filters.map((filter) => (
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                 activeFilter === filter.id
                   ? 'bg-lime-400 text-[#0f172a]'
-                  : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
+                  : 'border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10'
               }`}
             >
               {filter.label}
@@ -110,136 +225,130 @@ const EventsIntelligence = () => {
           ))}
         </div>
 
-        {/* Events Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {events.map((event, index) => (
-            <div
-              key={index}
-              className="group bg-[#1e293b] rounded-2xl border border-white/5 hover:border-lime-400/30 transition-all duration-300 overflow-hidden"
-            >
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
+        <div className="mb-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {filteredEvents.map((event) => {
+            const status = getEventStatus(event.submissionDeadline, event.date, event.tournamentEndDate);
+            const participationType = getParticipationType(event.sport);
+
+            return (
+              <article
+                key={event.id}
+                className="group rounded-3xl border border-white/10 bg-[#111b31]/90 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.28)] transition-all duration-300 hover:-translate-y-1 hover:border-lime-400/30"
+              >
+                <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-white font-semibold text-lg group-hover:text-lime-400 transition-colors">
+                    <h3 className="text-lg font-semibold text-white transition-colors group-hover:text-lime-300">
                       {event.name}
                     </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <MapPin className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-400 text-sm">{event.venue}</span>
+                    <div className="mt-2 flex items-center gap-2 text-sm text-slate-400">
+                      <MapPin className="h-4 w-4" />
+                      <span>{event.location}</span>
                     </div>
                   </div>
-                  <Badge className={`${
-                    event.status === 'Upcoming' ? 'bg-blue-500/20 text-blue-400' :
-                    event.status === 'Registration Open' ? 'bg-green-500/20 text-green-400' :
-                    'bg-gray-500/20 text-gray-400'
-                  }`}>
-                    {event.status}
-                  </Badge>
+                  <Badge className={getStatusClasses(status)}>{status}</Badge>
                 </div>
 
-                {/* Details */}
-                <div className="flex flex-wrap gap-3 mb-4">
-                  <Badge variant="outline" className="border-purple-500/30 text-purple-400">
+                <div className="mb-4 flex flex-wrap gap-2">
+                  <Badge variant="outline" className="border-lime-400/30 text-lime-300">
                     {event.level}
                   </Badge>
-                  <Badge variant="outline" className="border-white/20 text-gray-300">
-                    {event.type}
+                  <Badge variant="outline" className="border-white/15 text-slate-300">
+                    {participationType}
                   </Badge>
-                  <Badge variant="outline" className="border-white/20 text-gray-300">
+                  <Badge variant="outline" className="border-white/15 text-slate-300">
                     {event.gender}
                   </Badge>
                 </div>
 
-                {/* Sports */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {event.sports.map((sport, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300"
-                    >
-                      {sport}
+                <div className="mb-4 flex flex-wrap gap-2">
+                  <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-200">{event.sport}</span>
+                  {event.submissionDeadline && (
+                    <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">
+                      Apply by {formatDateRange(event.submissionDeadline)}
                     </span>
-                  ))}
+                  )}
                 </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                  <div className="flex items-center gap-4">
+                <p className="mb-5 line-clamp-3 text-sm leading-6 text-slate-300">
+                  {event.description ?? `${event.sport} competition for ${event.gender.toLowerCase()} athletes at ${event.level.toLowerCase()} level.`}
+                </p>
+
+                <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                  <div className="space-y-2 text-sm text-slate-300">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-400 text-sm">{event.date}</span>
+                      <Clock3 className="h-4 w-4 text-slate-500" />
+                      <span>{formatDateRange(event.date, event.tournamentEndDate)}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-400 text-sm">{event.players} players</span>
+                      <Users className="h-4 w-4 text-slate-500" />
+                      <span>{event.time}</span>
                     </div>
                   </div>
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-lime-400 hover:text-lime-500 hover:bg-lime-400/10"
+                    onClick={onSignInClick}
+                    className="text-lime-300 hover:bg-lime-400/10 hover:text-lime-200"
                   >
                     View Details
-                    <ArrowRight className="ml-1 w-4 h-4" />
+                    <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
                 </div>
-              </div>
-            </div>
-          ))}
+              </article>
+            );
+          })}
         </div>
 
-        {/* Sports Categories */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Team Sports */}
-          <div className="bg-[#1e293b] rounded-2xl border border-white/10 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-blue-400" />
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-500/20">
+                <Trophy className="h-5 w-5 text-sky-300" />
               </div>
-              <h4 className="text-white font-semibold">Team Sports</h4>
+              <h4 className="text-lg font-semibold text-white">Team Sports in Rotation</h4>
             </div>
             <div className="flex flex-wrap gap-2">
-              {teamSports.map((sport) => (
-                <span
-                  key={sport}
-                  className="px-3 py-1.5 bg-white/5 hover:bg-blue-500/20 rounded-lg text-sm text-gray-300 hover:text-blue-400 transition-colors cursor-pointer"
-                >
-                  {sport}
-                </span>
-              ))}
+              {featuredSports.team.length > 0 ? (
+                featuredSports.team.map((sport) => (
+                  <span key={sport} className="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                    {sport}
+                  </span>
+                ))
+              ) : (
+                <p className="text-sm text-slate-400">No team-sport events in the selected filter right now.</p>
+              )}
             </div>
           </div>
 
-          {/* Solo Sports */}
-          <div className="bg-[#1e293b] rounded-2xl border border-white/10 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-                <Users className="w-5 h-5 text-orange-400" />
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/20">
+                <Users className="h-5 w-5 text-orange-300" />
               </div>
-              <h4 className="text-white font-semibold">Solo Sports</h4>
+              <h4 className="text-lg font-semibold text-white">Solo Sports in Rotation</h4>
             </div>
             <div className="flex flex-wrap gap-2">
-              {soloSports.map((sport) => (
-                <span
-                  key={sport}
-                  className="px-3 py-1.5 bg-white/5 hover:bg-orange-500/20 rounded-lg text-sm text-gray-300 hover:text-orange-400 transition-colors cursor-pointer"
-                >
-                  {sport}
-                </span>
-              ))}
+              {featuredSports.solo.length > 0 ? (
+                featuredSports.solo.map((sport) => (
+                  <span key={sport} className="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                    {sport}
+                  </span>
+                ))
+              ) : (
+                <p className="text-sm text-slate-400">No solo-sport events in the selected filter right now.</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* CTA */}
         <div className="mt-12 text-center">
           <Button
             size="lg"
-            className="bg-lime-400 hover:bg-lime-500 text-[#0f172a] font-semibold px-8"
+            onClick={onSignInClick}
+            className="bg-lime-400 px-8 font-semibold text-[#0f172a] hover:bg-lime-500"
           >
-            View All Upcoming Events
-            <ArrowRight className="ml-2 w-5 h-5" />
+            Explore Event Dashboard
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </div>

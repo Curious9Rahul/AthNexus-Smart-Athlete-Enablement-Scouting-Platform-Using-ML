@@ -22,6 +22,7 @@ const Navigation = ({ onSignInClick }: NavigationProps) => {
 
   const navItems = [
     { label: 'Features', href: '#features' },
+    { label: 'Events', href: '#events' },
     { label: 'Athletes', href: '#athletes' },
     { label: 'AI', href: '#ai' },
     { label: 'How It Works', href: '#how-it-works' },

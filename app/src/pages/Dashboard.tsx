@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import DashboardSidebar from '@/components/DashboardSidebar';
-import Chatbot from '@/components/Chatbot';
 import Overview from './dashboard/Overview';
 import Events from './dashboard/Events';
 import MyEvents from './dashboard/MyEvents';
 import Analytics from './dashboard/Analytics';
+import DashboardAIAssistant from './dashboard/AIAssistant';
 import ProfileForm from './ProfileForm';
 import ProfileView from './ProfileView';
-
-type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile' | 'profile-edit';
+import type { DashboardView } from '@/types/dashboard';
 
 const Dashboard = () => {
     const [activeView, setActiveView] = useState<DashboardView>('overview');
@@ -23,6 +22,8 @@ const Dashboard = () => {
                 return <MyEvents />;
             case 'analytics':
                 return <Analytics />;
+            case 'ai-assistant':
+                return <DashboardAIAssistant />;
             case 'profile':
                 return <ProfileView
                     onBack={() => setActiveView('overview')}
@@ -44,9 +45,6 @@ const Dashboard = () => {
             <main className="flex-1 p-8 overflow-y-auto">
                 {renderContent()}
             </main>
-
-            {/* Chatbot */}
-            <Chatbot />
         </div>
     );
 };

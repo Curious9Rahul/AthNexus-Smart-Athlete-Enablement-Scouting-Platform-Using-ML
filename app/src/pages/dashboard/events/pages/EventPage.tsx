@@ -101,10 +101,6 @@ const EventPage = ({ events, participationRequests, onRequestParticipation, onSu
   const activeEvents = useMemo(
     () =>
       events.filter((event) => {
-        if (normalizeLevel(event.level) === "District" || normalizeLevel(event.level) === "State") {
-          return true;
-        }
-
         const { end } = parseEventWindow(event);
         return end.getTime() > nowMs;
       }),

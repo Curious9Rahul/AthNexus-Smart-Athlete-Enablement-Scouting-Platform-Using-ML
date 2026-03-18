@@ -1,8 +1,7 @@
 import { Calendar, Trophy, TrendingUp, Zap, Award } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-
-type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile' | 'profile-edit';
+import type { DashboardView } from '@/types/dashboard';
 
 interface OverviewProps {
     onNavigate: (view: DashboardView) => void;

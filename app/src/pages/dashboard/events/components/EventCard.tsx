@@ -28,9 +28,88 @@ const levelLogos: Record<string, string> = {
   "Khelo India": kheloIndiaLogo
 };
 
+type DateCandidate = {
+  label: string;
+  isoDate: string;
+};
+
+const parseIsoDate = (isoDate: string) => {
+  const [yearText, monthText, dayText] = isoDate.split("-");
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  const parsed = new Date(year, month - 1, day, 0, 0, 0, 0);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const formatDateLabel = (date: Date) =>
+  date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+
+const formatRelativeLabel = (today: Date, date: Date) => {
+  const diffDays = Math.round((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return "Today";
+  }
+
+  if (diffDays === 1) {
+    return "Tomorrow";
+  }
+
+  if (diffDays > 1) {
+    return `In ${diffDays} days`;
+  }
+
+  if (diffDays === -1) {
+    return "Yesterday";
+  }
+
+  return `${Math.abs(diffDays)} days ago`;
+};
+
+const getRelevantDateText = (event: Event) => {
+  const candidates: DateCandidate[] = [
+    ...(event.submissionDeadline ? [{ label: "Submission", isoDate: event.submissionDeadline }] : []),
+    ...(event.queryResolutionDeadline ? [{ label: "Query", isoDate: event.queryResolutionDeadline }] : []),
+    ...(event.reportingDate ? [{ label: "Reporting", isoDate: event.reportingDate }] : []),
+    { label: "Starts", isoDate: event.date },
+    ...(event.tournamentEndDate ? [{ label: "Ends", isoDate: event.tournamentEndDate }] : [])
+  ];
+
+  const parsedCandidates = candidates
+    .map((item) => ({ ...item, date: parseIsoDate(item.isoDate) }))
+    .filter((item): item is DateCandidate & { date: Date } => Boolean(item.date));
+
+  if (parsedCandidates.length === 0) {
+    return event.date;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcoming = parsedCandidates
+    .filter((item) => item.date.getTime() >= today.getTime())
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  const selected =
+    upcoming[0] ?? parsedCandidates.sort((a, b) => b.date.getTime() - a.date.getTime())[0];
+
+  return `${selected.label}: ${formatDateLabel(selected.date)} (${formatRelativeLabel(today, selected.date)})`;
+};
+
 const EventCard = ({ event, hasRequested, onDetails, onRequestParticipation }: Props) => {
   const sportGradient = getSportGradient();
   const categoryLogo = levelLogos[event.level];
+  const relevantDateText = getRelevantDateText(event);
 
   return (
     <article className="event-card">
@@ -60,7 +139,7 @@ const EventCard = ({ event, hasRequested, onDetails, onRequestParticipation }: P
           </p>
           <p className="card-meta flex items-center gap-2">
             <Calendar className="w-4 h-4 text-gray-400" />
-            <span>{event.date}</span>
+            <span>{relevantDateText}</span>
           </p>
           <p className="card-time flex items-center gap-2">
             <Clock className="w-4 h-4 text-lime-400" />

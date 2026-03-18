@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import AIAssistant from './components/AIAssistant';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Hero from './sections/Hero';
 import ProblemStatement from './sections/ProblemStatement';
 import SolutionOverview from './sections/SolutionOverview';
+import EventsIntelligence from './sections/EventsIntelligence';
 import AthleteShowcase from './sections/AthleteShowcase';
 import ExplainableAI from './sections/ExplainableAI';
 import HowItWorks from './sections/HowItWorks';
@@ -68,6 +70,7 @@ function MainContent() {
         <Hero />               {/* Landing area with key value prop */}
         <ProblemStatement />   {/* Why this solution is needed */}
         <SolutionOverview />   {/* High-level features */}
+        <EventsIntelligence onSignInClick={handleSignInClick} />
         <AthleteShowcase />    {/* Example profiles */}
         <ExplainableAI />      {/* AI transparency features */}
         <HowItWorks />         {/* Step-by-step process */}
@@ -85,6 +88,7 @@ function App() {
   return (
     <AuthProvider>
       <MainContent />
+      <AIAssistant />
     </AuthProvider>
   );
 }

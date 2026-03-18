@@ -441,7 +441,7 @@
   font-family: inherit;
 }.athnexus-events-module .suggest-form .invalid-field{
   border-color: #d13737;
-  background: rgba(255, 255, 255, 0.05)6f6;
+  background: rgba(255, 255, 255, 0.05);
 }.athnexus-events-module .field-error{
   font-size: 0.78rem;
   color: #b42323;
@@ -754,7 +754,7 @@
   font-size: 1.28rem;
 }.athnexus-events-module .timeline-card p{
   margin: 0.55rem 0 0;
-}.athnexus-events-module @keyframes riseIn{
+}@keyframes riseIn{
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -763,7 +763,7 @@
     opacity: 1;
     transform: translateY(0);
   }
-}.athnexus-events-module @keyframes liftIn{
+}@keyframes liftIn{
   from {
     opacity: 0;
     transform: translateY(16px) scale(0.98);
@@ -772,94 +772,94 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}.athnexus-events-module @keyframes marquee{
+}@keyframes marquee{
   from {
     transform: translateX(0);
   }
   to {
     transform: translateX(-50%);
   }
-}.athnexus-events-module @media (max-width: 740px){
-  .top-nav-inner,
-  .event-page,
-  .admin-page,
-  .details-page {
+}@media (max-width: 740px){
+  .athnexus-events-module .top-nav-inner,
+  .athnexus-events-module .event-page,
+  .athnexus-events-module .admin-page,
+  .athnexus-events-module .details-page {
     padding-left: 0.85rem;
     padding-right: 0.85rem;
   }
 
-  .filter-actions {
+  .athnexus-events-module .filter-actions {
     flex-direction: column;
   }
 
-  .search-row {
+  .athnexus-events-module .search-row {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .search-input-shell {
+  .athnexus-events-module .search-input-shell {
     width: 100%;
   }
 
-  .search-filter-panel {
+  .athnexus-events-module .search-filter-panel {
     grid-template-columns: 1fr;
     width: 100%;
   }
 
-  .events-grid {
+  .athnexus-events-module .events-grid {
     grid-template-columns: 1fr;
   }
 
-  .game-type-columns {
+  .athnexus-events-module .game-type-columns {
     grid-template-columns: 1fr;
     gap: 0.8rem;
   }
 
-  .live-pill {
+  .athnexus-events-module .live-pill {
     min-width: 220px;
   }
 
-  .time-row {
+  .athnexus-events-module .time-row {
     grid-template-columns: 1fr;
   }
 
-  .details-top-strip {
+  .athnexus-events-module .details-top-strip {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .details-anchor-tabs {
+  .athnexus-events-module .details-anchor-tabs {
     justify-content: flex-start;
   }
 
-  .details-hero-card {
+  .athnexus-events-module .details-hero-card {
     grid-template-columns: 1fr;
     padding: 1rem;
     margin: 0.9rem 0.85rem 0;
   }
 
-  .details-block {
+  .athnexus-events-module .details-block {
     margin: 0.9rem 0.85rem 0;
   }
 
-  .details-block h2 {
+  .athnexus-events-module .details-block h2 {
     font-size: 1.45rem;
   }
 
-  .timeline-item {
+  .athnexus-events-module .timeline-item {
     grid-template-columns: 48px minmax(0, 1fr);
     gap: 0.7rem;
   }
 
-  .timeline-item::before {
+  .athnexus-events-module .timeline-item::before {
     left: 24px;
   }
 
-  .timeline-date-badge {
+  .athnexus-events-module .timeline-date-badge {
     width: 42px;
   }
 
-  .timeline-date-badge strong {
+  .athnexus-events-module .timeline-date-badge strong {
     font-size: 1.1rem;
   }
 }

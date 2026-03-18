@@ -28,10 +28,67 @@ const shiftDate = (isoDate: string, days: number) => {
   return formatDate(date);
 };
 
+type SyntheticScheduleConfig = {
+  startOffsetDays: number;
+  durationDays: number;
+  submissionLeadDays?: number;
+  queryLeadDays?: number;
+  reportingLeadDays?: number;
+};
+
+const syntheticToday = new Date();
+syntheticToday.setHours(0, 0, 0, 0);
+
+const syntheticScheduleByEventId: Record<number, SyntheticScheduleConfig> = {
+  1: { startOffsetDays: 3, durationDays: 1 },
+  2: { startOffsetDays: 3, durationDays: 1 },
+  3: { startOffsetDays: 6, durationDays: 3 },
+  4: { startOffsetDays: 6, durationDays: 3 },
+  5: { startOffsetDays: 10, durationDays: 2 },
+  6: { startOffsetDays: 10, durationDays: 2 },
+  7: { startOffsetDays: 17, durationDays: 3 },
+  8: { startOffsetDays: 17, durationDays: 3 },
+  9: { startOffsetDays: 8, durationDays: 5 },
+  10: { startOffsetDays: 8, durationDays: 5 },
+  11: { startOffsetDays: 35, durationDays: 11 },
+  12: { startOffsetDays: 35, durationDays: 11 },
+  13: { startOffsetDays: 2, durationDays: 2, submissionLeadDays: 1, queryLeadDays: 1, reportingLeadDays: 1 },
+  14: { startOffsetDays: 2, durationDays: 2, submissionLeadDays: 1, queryLeadDays: 1, reportingLeadDays: 1 }
+};
+
+const buildOffsetDate = (offsetDays: number) => {
+  const date = new Date(syntheticToday.getTime() + offsetDays * DAY_MS);
+  return formatDate(date);
+};
+
+const applySyntheticSchedule = (event: Event): Event => {
+  const config = syntheticScheduleByEventId[event.id];
+
+  if (!config) {
+    return event;
+  }
+
+  const eventDate = buildOffsetDate(config.startOffsetDays);
+  const submissionLeadDays = Math.min(config.submissionLeadDays ?? 5, config.startOffsetDays);
+  const queryLeadDays = Math.min(config.queryLeadDays ?? 3, config.startOffsetDays);
+  const reportingLeadDays = Math.min(config.reportingLeadDays ?? 1, config.startOffsetDays);
+
+  return {
+    ...event,
+    date: eventDate,
+    submissionDeadline: shiftDate(eventDate, -submissionLeadDays),
+    queryResolutionDeadline: shiftDate(eventDate, -queryLeadDays),
+    reportingDate: shiftDate(eventDate, -reportingLeadDays),
+    reportingTime: event.reportingTime ?? event.time,
+    tournamentEndDate: shiftDate(eventDate, Math.max(config.durationDays - 1, 0))
+  };
+};
+
 const districtBrochureUrl = "https://www.mu.ac.in/";
 const stateBrochureUrl = "https://maharashtraathletics.in/event/";
 
-const districtEvents: Event[] = [
+// Seed records are intentionally rebased to near-current synthetic dates.
+const districtEvents: Event[] = ([
   {
     id: 1,
     name: "Mumbai Suburban Inter Collegiate Yogasana Tournament",
@@ -176,7 +233,7 @@ const districtEvents: Event[] = [
       "Mumbai Suburban Zone Inter Collegiate Tournament 2025-2026. Shooting (Women). Organizing college: Tolani College, Andheri.",
     brochureUrl: districtBrochureUrl
   }
-];
+] as Event[]).map(applySyntheticSchedule);
 
 const indoorAthleticsDisciplines =
   "Disciplines: 60m, 60m hurdles, indoor heptathlon, track events (100m/200m/400m/800m/1500m/5000m/10000m, relays 4x100m and 4x400m), field events (high jump, long jump, triple jump, pole vault, shot put, discus, javelin, hammer throw), and endurance events (3000m steeplechase and race walking up to 20000m).";
@@ -184,7 +241,7 @@ const indoorAthleticsDisciplines =
 const standardAthleticsDisciplines =
   "Disciplines: track events (100m/200m/400m/800m/1500m/5000m/10000m, relays 4x100m and 4x400m), field events (high jump, long jump, triple jump, pole vault, shot put, discus, javelin, hammer throw), and endurance events (3000m steeplechase and race walking up to 20000m).";
 
-const stateEvents: Event[] = [
+const stateEvents: Event[] = ([
   {
     id: 9,
     name: "Maharashtra State Championships for National Indoor Meet",
@@ -291,7 +348,7 @@ const stateEvents: Event[] = [
       "Format: 3x3 half-court, league-cum-knockout, with three players on court. Competitions include Open Men, Open Women, and U-14 brackets.",
     brochureUrl: stateBrochureUrl
   }
-];
+] as Event[]).map(applySyntheticSchedule);
 
 const buildGeneratedSchedule = (eventDate: string, eventTime: string, durationDays: number) => ({
   submissionDeadline: shiftDate(eventDate, -12),
