@@ -158,3 +158,42 @@ select::-webkit-scrollbar-thumb {
   background: #475569;
   border-radius: 4px;
 }
+
+/* ── Language selector dropdown scrollbar ───────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(132, 204, 22, 0.5);
+}
+
+/* ── Google Translate: hide injected top-banner / toolbar ───────── */
+/* Google appends a fixed bar at the top of the page — suppress it */
+.skiptranslate iframe,
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+/* Also neutralise the font-override Google injects */
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
