@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
@@ -11,83 +12,153 @@ import HowItWorks from './sections/HowItWorks';
 import CTA from './sections/CTA';
 import AuthPage from './pages/AuthPage';
 import ProfileForm from './pages/ProfileForm';
-import Dashboard from './pages/Dashboard';
 
-// Main content component that uses auth context
-function MainContent() {
-  const { isAuthenticated, hasProfile, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'landing' | 'auth' | 'profile'>('landing');
+// Layouts
+import DashboardLayout from './components/DashboardLayout';
+import VerifierLayout from './components/VerifierLayout';
 
-  // Handle auth state changes
-  const handleSignInClick = () => {
-    setCurrentView('auth');
-  };
+// Athlete Pages
+import Overview from './pages/dashboard/Overview';
+import EventsPage from './pages/dashboard/EventsPage';
+import MyEventsPage from './pages/dashboard/MyEventsPage';
+import Analytics from './pages/dashboard/Analytics';
+import CreateEventPageAthlete from './pages/dashboard/CreateEventPage';
+import EventDetailPage from './pages/dashboard/EventDetailPage';
 
-  const handleAuthSuccess = () => {
-    setCurrentView('profile');
-  };
+// Verifier Pages
+import VerifierEventsPage from './pages/verifier/EventsPage';
+import EventApprovalPage from './pages/verifier/EventApprovalPage';
+import RegistrationApprovalPage from './pages/verifier/RegistrationApprovalPage';
+import EmailAlertsPage from './pages/verifier/EmailAlertsPage';
+import CreateEventPageVerifier from './pages/verifier/CreateEventPage';
 
-  const handleAuthCancel = () => {
-    setCurrentView('landing');
-  };
+import { Toaster, toast } from 'sonner';
 
-  const handleProfileComplete = () => {
-    // Reset view to allow the dashboard to show
-    setCurrentView('landing');
-  };
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
+  const { isAuthenticated, user, hasProfile } = useAuth();
+  const location = useLocation();
 
-  const handleProfileCancel = () => {
-    // User cancelled profile creation, logout and return to auth
-    logout();
-    setCurrentView('auth');
-  };
-
-  // Show auth page if user clicked sign in
-  if (currentView === 'auth' && !isAuthenticated) {
-    return <AuthPage onSuccess={handleAuthSuccess} onCancel={handleAuthCancel} />;
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Show dashboard if authenticated with profile
-  if (isAuthenticated && hasProfile) {
-    return <Dashboard />;
+  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+    toast.error('Access Denied', { description: 'You do not have permission to view this page' });
+    return <Navigate to="/" replace />;
   }
 
-  // Show profile form if authenticated but no profile
-  if (isAuthenticated && !hasProfile) {
-    return <ProfileForm onComplete={handleProfileComplete} onBack={handleProfileCancel} />;
+  // Redirect to profile form if authenticated but no profile (for players)
+  if (user?.role === 'player' && !hasProfile && location.pathname !== '/profile-setup') {
+    return <Navigate to="/profile-setup" replace />;
   }
 
-  // Show landing page
+  return <>{children}</>;
+};
+
+function LandingPage({ onSignInClick }: { onSignInClick: () => void }) {
   return (
     <div className="min-h-screen bg-[#0f172a]">
-      {/* Top Navigation Bar */}
-      <Navigation onSignInClick={handleSignInClick} />
-
-      {/* Main Content Sections */}
+      <Navigation onSignInClick={onSignInClick} />
       <main>
-        <Hero />               {/* Landing area with key value prop */}
-        <ProblemStatement />   {/* Why this solution is needed */}
-        <SolutionOverview />   {/* High-level features */}
-        <AthleteShowcase />    {/* Example profiles */}
-        <ExplainableAI />      {/* AI transparency features */}
-        <HowItWorks />         {/* Step-by-step process */}
-        <CTA />                {/* Call to action */}
+        <Hero />
+        <ProblemStatement />
+        <SolutionOverview />
+        <AthleteShowcase />
+        <ExplainableAI />
+        <HowItWorks />
+        <CTA />
       </main>
-
-      {/* Footer with links and copyright */}
       <Footer />
     </div>
   );
 }
 
-// Main Application Component with AuthProvider
+function MainContent() {
+  const { isAuthenticated, user, hasProfile, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Redirect after login/signup
+  useEffect(() => {
+    if (isAuthenticated && location.pathname === '/auth') {
+      if (user?.role === 'verifier') {
+        navigate('/verifier/event-approval', { replace: true });
+      } else if (user?.role === 'player') {
+        if (hasProfile) {
+          navigate('/dashboard', { replace: true });
+        } else {
+          navigate('/profile-setup', { replace: true });
+        }
+      }
+    }
+  }, [isAuthenticated, user, hasProfile, location, navigate]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage onSignInClick={() => navigate('/auth')} />} />
+      
+      <Route path="/auth" element={
+        <AuthPage 
+          onSuccess={() => {}} 
+          onCancel={() => navigate('/')} 
+        />
+      } />
+
+      <Route path="/profile-setup" element={
+        <ProtectedRoute allowedRoles={['player']}>
+          <ProfileForm 
+            onComplete={() => navigate('/dashboard')} 
+            onBack={() => {
+              logout();
+            }} 
+          />
+        </ProtectedRoute>
+      } />
+
+      {/* ATHLETE ROUTES */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute allowedRoles={['player', 'verifier']}>
+          <DashboardLayout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Overview onNavigate={() => {}} />} />
+        <Route path="events" element={<EventsPage />} />
+        <Route path="my-events" element={<MyEventsPage />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="create-event" element={<CreateEventPageAthlete />} />
+        <Route path="events/:id" element={<EventDetailPage />} />
+      </Route>
+
+      {/* VERIFIER ROUTES */}
+      <Route path="/verifier" element={
+        <ProtectedRoute allowedRoles={['verifier']}>
+          <VerifierLayout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Navigate to="/verifier/events" replace />} />
+        <Route path="events" element={<VerifierEventsPage />} />
+        <Route path="event-approval" element={<EventApprovalPage />} />
+        <Route path="registration-approval" element={<RegistrationApprovalPage />} />
+        <Route path="email-alerts" element={<EmailAlertsPage />} />
+        <Route path="create-event" element={<CreateEventPageVerifier />} />
+      </Route>
+
+      {/* Global Fallback Route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
-      <MainContent />
+      <BrowserRouter>
+        <Toaster position="top-right" richColors theme="dark" />
+        <MainContent />
+      </BrowserRouter>
     </AuthProvider>
   );
 }
 
 export default App;
-

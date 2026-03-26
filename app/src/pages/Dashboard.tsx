@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Toaster } from 'sonner';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import Chatbot from '@/components/Chatbot';
 import Overview from './dashboard/Overview';
-import Events from './dashboard/Events';
+import EventsPage from './dashboard/EventsPage';
 import MyEvents from './dashboard/MyEvents';
 import Analytics from './dashboard/Analytics';
 import ProfileForm from './ProfileForm';
@@ -18,7 +19,7 @@ const Dashboard = () => {
             case 'overview':
                 return <Overview onNavigate={setActiveView} />;
             case 'events':
-                return <Events />;
+                return <EventsPage />;
             case 'my-events':
                 return <MyEvents />;
             case 'analytics':
@@ -47,6 +48,9 @@ const Dashboard = () => {
 
             {/* Chatbot */}
             <Chatbot />
+
+            {/* Toast notifications */}
+            <Toaster position="bottom-right" richColors />
         </div>
     );
 };

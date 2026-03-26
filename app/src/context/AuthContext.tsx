@@ -1,26 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-// Dummy credentials for testing (3 different users)
-const DUMMY_CREDENTIALS = [
-    {
-        email: 'player1@athnexus.com',
-        password: 'player123',
-        name: 'Alex Johnson',
-        sport: 'Basketball',
-    },
-    {
-        email: 'player2@athnexus.com',
-        password: 'player123',
-        name: 'Sarah Martinez',
-        sport: 'Football',
-    },
-    {
-        email: 'player3@athnexus.com',
-        password: 'player123',
-        name: 'Michael Chen',
-        sport: 'Cricket',
-    },
-];
+// Role type definition
+export type Role = 'player' | 'verifier' | 'admin';
 
 // User profile interface
 export interface UserProfile {
@@ -60,12 +41,54 @@ export interface UserProfile {
     pushups: number | '';
     plank_sec: number | '';
     run_1km: number | ''; // minutes
+
+    // Verification Status
+    verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+    rejectionReason?: string;
 }
 
 interface User {
     email: string;
+    role: Role;
     profile: UserProfile | null;
 }
+
+// Dummy credentials for testing (4 different users)
+const DUMMY_CREDENTIALS: { email: string; password: string; name: string; sport?: string; role: Role }[] = [
+    {
+        email: 'player1@athnexus.com',
+        password: 'player123',
+        name: 'Alex Johnson',
+        sport: 'Basketball',
+        role: 'player'
+    },
+    {
+        email: 'player2@athnexus.com',
+        password: 'player123',
+        name: 'Sarah Martinez',
+        sport: 'Football',
+        role: 'player'
+    },
+    {
+        email: 'player3@athnexus.com',
+        password: 'player123',
+        name: 'Michael Chen',
+        sport: 'Cricket',
+        role: 'player'
+    },
+    {
+        email: 'verifier@athnexus.com',
+        password: 'verify123',
+        name: 'Raj',
+        role: 'verifier'
+    },
+    {
+        email: 'prasad@athnexus.com',
+        password: 'prasad123',
+        name: 'Prasad Rane',
+        role: 'verifier'
+    }
+];
 
 interface AuthContextType {
     user: User | null;
@@ -109,6 +132,65 @@ const DUMMY_PROFILES: Record<string, UserProfile> = {
         pushups: 60,
         plank_sec: 180,
         run_1km: 3.5,
+        verificationStatus: 'VERIFIED'
+    },
+    'verifier@athnexus.com': {
+        name: 'Raj',
+        gender: 'Male',
+        age: 30,
+        height_cm: '',
+        weight_kg: '',
+        bmi: '',
+        department: 'Athletics Department',
+        year: 'Senior',
+        sport: 'Verifier',
+        position: 'Head Verifier',
+        experienceYears: 8,
+        competitionLevel: 'Professional',
+        tournamentsPlayed: '',
+        matchesWon: '',
+        medalsWon: '',
+        activeStatus: 'Active',
+        perceivedSkill: 10,
+        achievementScore: '',
+        participationScore: '',
+        activityScore: '',
+        fitnessIndex: '',
+        talentScore: '',
+        sprint_100m: '',
+        pushups: '',
+        plank_sec: '',
+        run_1km: '',
+        verificationStatus: 'VERIFIED'
+    },
+    'prasad@athnexus.com': {
+        name: 'Prasad Rane',
+        gender: 'Male',
+        age: 28,
+        height_cm: '',
+        weight_kg: '',
+        bmi: '',
+        department: 'Technical Operations',
+        year: 'Lead',
+        sport: 'Prasad',
+        position: 'System Administrator',
+        experienceYears: 6,
+        competitionLevel: 'Professional',
+        tournamentsPlayed: '',
+        matchesWon: '',
+        medalsWon: '',
+        activeStatus: 'Active',
+        perceivedSkill: 10,
+        achievementScore: '',
+        participationScore: '',
+        activityScore: '',
+        fitnessIndex: '',
+        talentScore: '',
+        sprint_100m: '',
+        pushups: '',
+        plank_sec: '',
+        run_1km: '',
+        verificationStatus: 'VERIFIED'
     }
 };
 
@@ -148,11 +230,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 if (DUMMY_PROFILES[matchedUser.email]) {
                     setUser({
                         email: matchedUser.email,
+                        role: matchedUser.role,
                         profile: DUMMY_PROFILES[matchedUser.email]
                     });
                 } else {
                     // Other users start with no profile
-                    setUser({ email: matchedUser.email, profile: null });
+                    setUser({
+                        email: matchedUser.email,
+                        role: matchedUser.role,
+                        profile: null
+                    });
                 }
             }
             return true;
@@ -161,10 +248,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const signup = (email: string, password: string): boolean => {
-        // For now, any signup succeeds
+        // For now, any signup succeeds as a player
         if (email && password.length >= 6) {
             setUser({
                 email,
+                role: 'player',
                 profile: null,
             });
             return true;
