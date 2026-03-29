@@ -10,6 +10,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 const resend = new Resend(process.env.RESEND_API_KEY);
+const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
 app.use(cors());
 app.use(express.json());
@@ -348,7 +349,7 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
       if (athleteEmail) {
         try {
           await resend.emails.send({
-            from: 'AthNexus Alerts <onboarding@resend.dev>',
+            from: `AthNexus Alerts <${fromEmail}>`,
             to: athleteEmail,
             subject: `✅ Your registration is confirmed — ${event.title}`,
             html: buildTournamentEmailHTML(athleteName, { ...event, tournamentName: event.title, hoursLeft: 0, slotsLeft: 0, totalSlots: 0 })
@@ -390,7 +391,7 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/reject', async (req, 
         try {
           // Reusing the same helper, though we could make a dedicated one
           await resend.emails.send({
-            from: 'AthNexus Alerts <onboarding@resend.dev>',
+            from: `AthNexus Alerts <${fromEmail}>`,
             to: athleteEmail,
             subject: `Update on your registration — ${event.title}`,
             html: `<div style="font-family: Arial; padding: 20px;">
@@ -423,7 +424,7 @@ app.post('/api/send-email', async (req, res) => {
 
   try {
     const data = await resend.emails.send({
-      from: 'AthNexus Alerts <onboarding@resend.dev>',
+      from: `AthNexus Alerts <${fromEmail}>`,
       to: playerEmail,
       subject: `🏆 Tournament Alert: ${tournament.tournamentName}`,
       html: buildTournamentEmailHTML(playerName, tournament),
@@ -437,27 +438,221 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
+const emailHtml = (recipientName, event) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+</head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  
+  <table width="100%" cellpadding="0" cellspacing="0" 
+         style="max-width:500px;margin:0 auto;background:#0d1520;">
+    
+    <!-- HEADER -->
+    <tr>
+      <td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+        <span style="font-size:16px;font-weight:700;color:#a8e63d;">
+          AthNexus
+        </span>
+      </td>
+    </tr>
+
+    <!-- HERO -->
+    <tr>
+      <td style="padding:32px 24px 20px;background:#111a28;">
+        <p style="margin:0 0 4px;font-size:13px;color:#5a8aaa;
+                  text-transform:uppercase;letter-spacing:.06em;">
+          ${event.sport} · ${event.level}
+        </p>
+        <h1 style="margin:0 0 6px;font-size:26px;font-weight:800;
+                   color:#ffffff;line-height:1.2;">
+          ${event.image_emoji || '🏆'} ${event.title}
+        </h1>
+        <p style="margin:0;font-size:18px;color:#8aaabf;font-weight:400;">
+          is starting soon
+        </p>
+      </td>
+    </tr>
+
+    <!-- DIVIDER -->
+    <tr>
+      <td style="padding:0 24px;">
+        <hr style="border:none;border-top:1px solid #1e2e40;margin:0;">
+      </td>
+    </tr>
+
+    <!-- DATE ROW -->
+    <tr>
+      <td style="padding:20px 24px 12px;">
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="vertical-align:top;padding-right:14px;">
+              <div style="background:#1e2e40;border-radius:8px;
+                          width:48px;text-align:center;overflow:hidden;">
+                <div style="background:#a8e63d;padding:3px 0;
+                            font-size:10px;font-weight:700;color:#0d1520;
+                            text-transform:uppercase;letter-spacing:.05em;">
+                  ${new Date(event.start_date)
+                    .toLocaleString('en-IN',{month:'short'}).toUpperCase()}
+                </div>
+                <div style="padding:6px 0;font-size:22px;font-weight:800;
+                            color:#ffffff;">
+                  ${new Date(event.start_date).getDate()}
+                </div>
+              </div>
+            </td>
+            <td style="vertical-align:middle;">
+              <p style="margin:0;font-size:16px;font-weight:700;
+                        color:#ffffff;">
+                ${new Date(event.start_date)
+                  .toLocaleDateString('en-IN',{weekday:'long',
+                  day:'numeric',month:'long'})}
+              </p>
+              <p style="margin:4px 0 0;font-size:13px;color:#5a8aaa;">
+                ${new Date(event.start_date)
+                  .toLocaleTimeString('en-IN',{hour:'2-digit',
+                  minute:'2-digit'})} – 
+                ${new Date(event.end_date)
+                  .toLocaleTimeString('en-IN',{hour:'2-digit',
+                  minute:'2-digit'})} IST
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- LOCATION ROW -->
+    <tr>
+      <td style="padding:4px 24px 20px;">
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="vertical-align:top;padding-right:14px;">
+              <div style="background:#1e2e40;border-radius:8px;
+                          width:48px;height:48px;display:flex;
+                          align-items:center;justify-content:center;
+                          text-align:center;line-height:48px;
+                          font-size:20px;">
+                📍
+              </div>
+            </td>
+            <td style="vertical-align:middle;">
+              <p style="margin:0;font-size:16px;font-weight:700;
+                        color:#ffffff;">
+                ${event.venue}
+              </p>
+              <p style="margin:3px 0 0;font-size:13px;color:#5a8aaa;">
+                ${event.city}, ${event.state}
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- DIVIDER -->
+    <tr>
+      <td style="padding:0 24px;">
+        <hr style="border:none;border-top:1px solid #1e2e40;margin:0;">
+      </td>
+    </tr>
+
+    <!-- PRIZE ROW -->
+    <tr>
+      <td style="padding:16px 24px 8px;">
+        <p style="margin:0;font-size:13px;color:#5a8aaa;">
+          Prize: <span style="color:#ffd044;font-weight:600;">
+          ${event.prize}</span>
+        </p>
+      </td>
+    </tr>
+
+    <!-- BUTTONS -->
+    <tr>
+      <td style="padding:12px 24px 32px;">
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="padding-right:10px;">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || 
+                         'http://localhost:5173'}/dashboard/events/${event.id}"
+                 style="display:inline-block;background:#a8e63d;
+                        color:#0d1520;text-decoration:none;
+                        padding:12px 24px;border-radius:8px;
+                        font-size:14px;font-weight:700;">
+                View Event
+              </a>
+            </td>
+            <td>
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || 
+                         'http://localhost:5173'}/dashboard/my-events"
+                 style="display:inline-block;background:#1e2e40;
+                        color:#c0d4e8;text-decoration:none;
+                        padding:12px 24px;border-radius:8px;
+                        font-size:14px;font-weight:600;
+                        border:1px solid #2a3e52;">
+                My Events
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- FOOTER -->
+    <tr>
+      <td style="padding:16px 24px;border-top:1px solid #1e2e40;
+                 text-align:center;">
+        <p style="margin:0;font-size:12px;color:#3a5a7a;">
+          Sent by AthNexus Verifier Team
+        </p>
+        <p style="margin:4px 0 0;font-size:11px;color:#2a4a6a;">
+          © 2026 AthNexus · Smart Athlete Enablement Platform
+        </p>
+      </td>
+    </tr>
+
+  </table>
+</body>
+</html>
+`;
+
 // Email: Send bulk tournament alerts
 app.post('/api/send-bulk-email', async (req, res) => {
-  const { players, tournament, recipients, subject, message } = req.body;
+  const { players, tournament, recipients, subject, message, eventId } = req.body;
   
   if (recipients && subject && message) {
     console.log(`[RESEND BULK CUSTOM] Sending custom email to ${recipients.length} recipients`);
     let sent = 0, failed = 0;
     
+    let selectedEvent = null;
+    if (eventId) {
+      selectedEvent = getEvents().find(e => e.id === eventId);
+    }
+    
     for (const recipient of recipients) {
       try {
-        await resend.emails.send({
-          from: 'AthNexus <onboarding@resend.dev>',
-          to: recipient.email,
-          subject: subject,
-          html: `<p>Hi ${recipient.name},</p>
+        let finalHtml = '';
+        if (selectedEvent) {
+          finalHtml = emailHtml(recipient.name, selectedEvent);
+        } else {
+          finalHtml = `<p>Hi ${recipient.name},</p>
                  <p>${message}</p>
                  <br/>
-                 <small>— AthNexus Verifier Team</small>`
+                 <small>— AthNexus Verifier Team</small>`;
+        }
+
+        const result = await resend.emails.send({
+          from: `AthNexus <${fromEmail}>`,
+          to: recipient.email,
+          subject: subject,
+          html: finalHtml
         });
+        console.log(`[RESEND BULK CUSTOM SUCCESS] Sent to ${recipient.email}, ID: ${result.id}`);
         sent++;
       } catch (e) {
+        console.error(`[RESEND BULK CUSTOM ERROR] Failed to send to ${recipient.email}:`, e.message || e);
         failed++;
       }
     }
@@ -470,7 +665,7 @@ app.post('/api/send-bulk-email', async (req, res) => {
     const results = await Promise.allSettled(
       (players || []).map(player => 
         resend.emails.send({
-          from: 'AthNexus Alerts <onboarding@resend.dev>',
+          from: `AthNexus Alerts <${fromEmail}>`,
           to: player.playerEmail,
           subject: `🏆 Tournament Alert: ${tournament.tournamentName}`,
           html: buildTournamentEmailHTML(player.playerName, tournament),
@@ -508,7 +703,7 @@ app.post('/api/update-status', async (req, res) => {
     if (status === 'Approved' && participant?.email) {
         try {
             await resend.emails.send({
-                from: 'AthNexus Alerts <onboarding@resend.dev>',
+                from: `AthNexus Alerts <${fromEmail}>`,
                 to: participant.email,
                 subject: `Selection Confirmed: ${tournament || 'AthNexus Event'}`,
                 html: buildTournamentEmailHTML(participant.name, { tournamentName: tournament || 'AthNexus Event', ...req.body })
