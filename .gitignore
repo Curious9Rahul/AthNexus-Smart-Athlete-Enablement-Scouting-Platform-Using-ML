@@ -4,3 +4,7 @@ build/
 .env
 .DS_Store
 .vscode/
+
+# Ignore databases
+*.db
+backend/deepscan.db
