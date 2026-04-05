@@ -37,6 +37,13 @@ import { AthNexusChat } from './components/AthNexusChat';
 import UserManagementPage from './pages/verifier/UserManagementPage';
 
 // Protected Route Component
+import { Toaster, toast } from 'sonner';
+
+/**
+ * Cleaned up App.tsx to remove missing Git stash imports
+ * and map /dashboard correctly to Dashboard.tsx
+ */
+
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
   const { isAuthenticated, user, hasProfile } = useAuth();
   const location = useLocation();
@@ -46,12 +53,17 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+  // Typecast bypass for older typescript structures
+  const userObj = user as any;
+
+  if (allowedRoles && userObj && userObj.role && !allowedRoles.includes(userObj.role)) {
     toast.error('Access Denied', { description: 'You do not have permission to view this page' });
     return <Navigate to="/" replace />;
   }
 
   // Redirect to profile form if authenticated but no profile (for players)
   if (user?.role === 'player' && !hasProfile && location.pathname !== '/profile-setup') {
+  if (userObj?.role === 'player' && !hasProfile && location.pathname !== '/profile-setup') {
     return <Navigate to="/profile-setup" replace />;
   }
 
@@ -61,6 +73,10 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
 function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0f172a]">
+function LandingPage({ onSignInClick }: { onSignInClick: () => void }) {
+  return (
+    <div className="min-h-screen bg-[#0f172a]">
+      <Navigation onSignInClick={onSignInClick} />
       <main>
         <Hero />
         <ProblemStatement />
@@ -86,6 +102,12 @@ function MainContent() {
       if (user?.role === 'verifier') {
         navigate('/verifier/event-approval', { replace: true });
       } else if (user?.role === 'player') {
+  useEffect(() => {
+    if (isAuthenticated && location.pathname === '/auth') {
+      const userObj = user as any;
+      if (userObj?.role === 'verifier') {
+        navigate('/verifier', { replace: true });
+      } else {
         if (hasProfile) {
           navigate('/dashboard', { replace: true });
         } else {
@@ -100,6 +122,8 @@ function MainContent() {
       <Navigation onSignInClick={() => navigate('/auth')} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
+    <Routes>
+      <Route path="/" element={<LandingPage onSignInClick={() => navigate('/auth')} />} />
       
       <Route path="/auth" element={
         <AuthPage 
@@ -114,6 +138,11 @@ function MainContent() {
             onComplete={() => navigate('/dashboard')} 
             onBack={() => {
               logout();
+              if (hasProfile) {
+                navigate('/dashboard');
+              } else {
+                logout();
+              }
             }} 
           />
         </ProtectedRoute>
@@ -148,6 +177,24 @@ function MainContent() {
         <Route path="user-management" element={<UserManagementPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
+      {/* ATHLETE & VERIFIER ROUTES */}
+      <Route path="/dashboard/*" element={
+        <ProtectedRoute allowedRoles={['player', 'verifier']}>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/verifier/*" element={
+        <ProtectedRoute allowedRoles={['verifier']}>
+            <div className="text-white p-8 text-center mt-20">
+                <h1 className="text-3xl font-bold">Verifier Dashboard</h1>
+                <p className="text-gray-400 mt-4">Welcome! This section is currently under construction pending layout restoration.</p>
+                <div className="mt-8">
+                  <button onClick={() => { logout(); navigate('/'); }} className="bg-lime-400 text-[#0f172a] px-6 py-2 rounded-lg font-bold">Logout</button>
+                </div>
+            </div>
+        </ProtectedRoute>
+      } />
 
       {/* Global Fallback Route */}
       <Route path="*" element={<Navigate to="/" replace />} />

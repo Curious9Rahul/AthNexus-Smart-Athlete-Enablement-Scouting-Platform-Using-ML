@@ -11,39 +11,49 @@ interface ProfileFormProps {
 }
 
 const ProfileForm = ({ onComplete, onBack }: ProfileFormProps) => {
-    const { updateProfile, logout } = useAuth();
+    const { user, updateProfile, logout } = useAuth();
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 4;
 
-    // Form state
-    const [formData, setFormData] = useState<UserProfile>({
-        name: '',
-        profileImage: '',
-        gender: '',
-        age: '',
-        height_cm: '',
-        weight_kg: '',
-        bmi: '',
-        department: '',
-        year: '',
-        sport: '',
-        position: '',
-        experienceYears: '',
-        competitionLevel: '',
-        tournamentsPlayed: '',
-        matchesWon: '',
-        medalsWon: '',
-        activeStatus: '',
-        perceivedSkill: '',
-        achievementScore: '',
-        participationScore: '',
-        activityScore: '',
-        fitnessIndex: '',
-        talentScore: '',
-        sprint_100m: '',
-        pushups: '',
-        plank_sec: '',
-        run_1km: '',
+    // Form state initialized with prior data if it exists
+    const [formData, setFormData] = useState<UserProfile>(() => {
+        if (user?.profile) {
+            return {
+                ...user.profile,
+                name: (user as any).name || user.profile.name || '',
+                profileImage: (user as any).profilePicture || user.profile.profileImage || '',
+            };
+        }
+        return {
+            name: (user as any)?.name || '',
+            profileImage: (user as any)?.profilePicture || '',
+            gender: '',
+            age: '',
+            height_cm: '',
+            weight_kg: '',
+            bmi: '',
+            department: '',
+            year: '',
+            sport: '',
+            position: '',
+            experienceYears: '',
+            competitionLevel: '',
+            tournamentsPlayed: '',
+            matchesWon: '',
+            medalsWon: '',
+            activeStatus: '',
+            perceivedSkill: '',
+            achievementScore: '',
+            participationScore: '',
+            activityScore: '',
+            fitnessIndex: '',
+            talentScore: '',
+            sprint_100m: '',
+            pushups: '',
+            plank_sec: '',
+            run_1km: '',
+            verificationStatus: 'PENDING'
+        };
     });
 
     // Auto-calculate BMI
@@ -54,6 +64,24 @@ const ProfileForm = ({ onComplete, onBack }: ProfileFormProps) => {
             setFormData(prev => ({ ...prev, bmi: Math.round(bmi * 10) / 10 }));
         }
     }, [formData.height_cm, formData.weight_kg]);
+
+    // Populate data when user context updates (fixes placeholders issue)
+    useEffect(() => {
+        if (user?.profile) {
+            setFormData(prev => ({
+                ...user.profile!,
+                name: (user as any).name || user.profile!.name || prev.name,
+                profileImage: (user as any).profilePicture || user.profile!.profileImage || prev.profileImage,
+            }));
+        } else if (user) {
+            // New user case: just ensure name and image from Google are filled
+            setFormData(prev => ({
+                ...prev,
+                name: (user as any).name || prev.name,
+                profileImage: (user as any).profilePicture || prev.profileImage,
+            }));
+        }
+    }, [user]);
 
     const handleChange = (field: keyof UserProfile, value: string | number) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -90,10 +118,10 @@ const ProfileForm = ({ onComplete, onBack }: ProfileFormProps) => {
                 {/* Header */}
                 <div className="text-center mb-8 relative">
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                        Build Your Athlete Profile
+                        {user?.profile ? 'Update Your Profile' : 'Build Your Athlete Profile'}
                     </h1>
                     <p className="text-gray-400">
-                        Complete your profile to unlock AI-powered performance insights
+                        {user?.profile ? 'Keep your details up-to-date for better AI performance insights' : 'Complete your profile to unlock AI-powered performance insights'}
                     </p>
 
                     {/* Back/Cancel Button */}
@@ -594,7 +622,7 @@ const ProfileForm = ({ onComplete, onBack }: ProfileFormProps) => {
                                     className="flex-1 bg-lime-400 hover:bg-lime-500 text-[#0f172a] font-semibold"
                                 >
                                     <CheckCircle2 className="w-4 h-4 mr-2" />
-                                    Complete Profile
+                                    {user?.profile ? 'Update Profile' : 'Complete Profile'}
                                 </Button>
                             )}
                         </div>

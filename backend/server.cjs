@@ -15,6 +15,34 @@ const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 app.use(cors());
 app.use(express.json());
 
+dotenv.config();
+
+const { Resend } = require('resend');
+const fs = require('fs');
+const path = require('path');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const passport = require('./config/passport');
+const authRoutes = require('./routes/auth');
+
+const app = express();
+const port = process.env.PORT || 5000;
+const resend = new Resend(process.env.RESEND_API_KEY || 're_1234567890');
+const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+// Database connection
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/athnexus')
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
+
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+app.use(express.json());
+app.use(cookieParser());
+app.use(passport.initialize());
+
+// Auth Routes
+app.use('/api/auth', authRoutes);
+
 // Log all requests
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -614,7 +642,7 @@ app.get('/api/verifier/events/pending', (req, res) => {
   res.json(events);
 });
 
-app.patch('/api/verifier/events/:id/approve', async (req, res) => {
+app.patch('/api/verifier/events/:id/approve', (req, res) => {
   const events = getEvents();
   const index = events.findIndex(e => e.id === req.params.id);
   if (index !== -1) {
@@ -646,6 +674,7 @@ app.patch('/api/verifier/events/:id/approve', async (req, res) => {
 });
 
 app.patch('/api/verifier/events/:id/reject', async (req, res) => {
+app.patch('/api/verifier/events/:id/reject', (req, res) => {
   const { reason } = req.body;
   const events = getEvents();
   const index = events.findIndex(e => e.id === req.params.id);
@@ -695,6 +724,7 @@ app.get('/api/verifier/registrations/pending', (req, res) => {
             registeredAt: reg.registeredAt,
             reg_status: reg.reg_status,
             formData: reg.formData || {}
+            registeredAt: reg.registeredAt
           });
         }
       });
@@ -746,6 +776,9 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
       saveEvents(events);
       
       // Send confirmation email (Luma-style)
+      saveEvents(events);
+      
+      // Send confirmation email
       const athleteEmail = event.registrations[regIndex].athleteEmail;
       const athleteName = event.registrations[regIndex].athleteName;
       if (athleteEmail) {
@@ -755,6 +788,10 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
             to: athleteEmail,
             subject: `✅ Registration Confirmed — ${event.title}`,
             html: buildRegistrationApprovedEmail(athleteName, event)
+            from: `AthNexus Alerts <${fromEmail}>`,
+            to: athleteEmail,
+            subject: `✅ Your registration is confirmed — ${event.title}`,
+            html: buildTournamentEmailHTML(athleteName, { ...event, tournamentName: event.title, hoursLeft: 0, slotsLeft: 0, totalSlots: 0 })
           });
           console.log(`[RESEND SUCCESS] Approval email sent to ${athleteEmail}`);
         } catch (e) {
@@ -788,6 +825,9 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/reject', async (req, 
       saveEvents(events);
       
       // Send rejection email (Luma-style)
+      saveEvents(events);
+      
+      // Send rejection email
       const athleteEmail = event.registrations[regIndex].athleteEmail;
       const athleteName = event.registrations[regIndex].athleteName;
       if (athleteEmail) {
@@ -797,6 +837,17 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/reject', async (req, 
             to: athleteEmail,
             subject: `Update on your registration — ${event.title}`,
             html: buildRegistrationRejectedEmail(athleteName, event, reason)
+          // Reusing the same helper, though we could make a dedicated one
+          await resend.emails.send({
+            from: `AthNexus Alerts <${fromEmail}>`,
+            to: athleteEmail,
+            subject: `Update on your registration — ${event.title}`,
+            html: `<div style="font-family: Arial; padding: 20px;">
+                    <h2>Update on your registration</h2>
+                    <p>Hi ${athleteName},</p>
+                    <p>Your registration for <strong>${event.title}</strong> was not approved.</p>
+                    ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
+                   </div>`
           });
           console.log(`[RESEND SUCCESS] Rejection email sent to ${athleteEmail}`);
         } catch (e) {

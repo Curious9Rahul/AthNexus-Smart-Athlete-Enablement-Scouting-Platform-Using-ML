@@ -3,22 +3,16 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 // Role type definition
 export type Role = 'player' | 'verifier' | 'admin';
 
-// User profile interface
 export interface UserProfile {
-    // Personal Information
     name: string;
-    profileImage?: string; // Optional profile image URL or base64
+    profileImage?: string;
     gender: 'Male' | 'Female' | 'Other' | '';
     age: number | '';
     height_cm: number | '';
     weight_kg: number | '';
     bmi: number | '';
-
-    // Academic/Organizational
     department: string;
     year: string;
-
-    // Sport Specific
     sport: string;
     position: string;
     experienceYears: number | '';
@@ -27,29 +21,26 @@ export interface UserProfile {
     matchesWon: number | '';
     medalsWon: number | '';
     activeStatus: 'Active' | 'Inactive' | '';
-    perceivedSkill: number | ''; // 1-10 scale
-
-    // Performance Scores
+    perceivedSkill: number | '';
     achievementScore: number | '';
     participationScore: number | '';
     activityScore: number | '';
     fitnessIndex: number | '';
     talentScore: number | '';
-
-    // Fitness Metrics
-    sprint_100m: number | ''; // seconds
+    sprint_100m: number | '';
     pushups: number | '';
     plank_sec: number | '';
     run_1km: number | ''; // minutes
-
-    // Verification Status
     verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
     rejectionReason?: string;
 }
 
 interface User {
+    _id: string;
     email: string;
+    name: string;
     role: Role;
+    profilePicture?: string;
     profile: UserProfile | null;
 }
 
@@ -93,202 +84,99 @@ const DUMMY_CREDENTIALS: { email: string; password: string; name: string; sport?
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
+    isLoading: boolean;
     hasProfile: boolean;
-    login: (email: string, password: string) => boolean;
-    signup: (email: string, password: string) => boolean;
+    login: (email: string, password: string) => boolean; // Kept for demo/legacy support
+    signup: (email: string, password: string) => boolean; // Kept for demo/legacy support
     logout: () => void;
     updateProfile: (profile: UserProfile) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Dummy profile for player1 bypass
-const DUMMY_PROFILES: Record<string, UserProfile> = {
-    'player1@athnexus.com': {
-        name: 'Alex Johnson',
-        profileImage: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&h=256&auto=format&fit=crop',
-        gender: 'Male',
-        age: 21,
-        height_cm: 185,
-        weight_kg: 82,
-        bmi: 24.0,
-        department: 'Sports Science',
-        year: '3rd Year',
-        sport: 'Basketball',
-        position: 'Forward',
-        experienceYears: 5,
-        competitionLevel: 'Advanced',
-        tournamentsPlayed: 12,
-        matchesWon: 45,
-        medalsWon: 3,
-        activeStatus: 'Active',
-        perceivedSkill: 8,
-        achievementScore: 85,
-        participationScore: 90,
-        activityScore: 75,
-        fitnessIndex: 88,
-        talentScore: 82,
-        sprint_100m: 11.5,
-        pushups: 60,
-        plank_sec: 180,
-        run_1km: 3.5,
-        verificationStatus: 'VERIFIED'
-    },
-    'verifier@athnexus.com': {
-        name: 'Raj',
-        gender: 'Male',
-        age: 30,
-        height_cm: '',
-        weight_kg: '',
-        bmi: '',
-        department: 'Athletics Department',
-        year: 'Senior',
-        sport: 'Verifier',
-        position: 'Head Verifier',
-        experienceYears: 8,
-        competitionLevel: 'Professional',
-        tournamentsPlayed: '',
-        matchesWon: '',
-        medalsWon: '',
-        activeStatus: 'Active',
-        perceivedSkill: 10,
-        achievementScore: '',
-        participationScore: '',
-        activityScore: '',
-        fitnessIndex: '',
-        talentScore: '',
-        sprint_100m: '',
-        pushups: '',
-        plank_sec: '',
-        run_1km: '',
-        verificationStatus: 'VERIFIED'
-    },
-    'prasad@athnexus.com': {
-        name: 'Prasad Rane',
-        gender: 'Male',
-        age: 28,
-        height_cm: '',
-        weight_kg: '',
-        bmi: '',
-        department: 'Technical Operations',
-        year: 'Lead',
-        sport: 'Prasad',
-        position: 'System Administrator',
-        experienceYears: 6,
-        competitionLevel: 'Professional',
-        tournamentsPlayed: '',
-        matchesWon: '',
-        medalsWon: '',
-        activeStatus: 'Active',
-        perceivedSkill: 10,
-        achievementScore: '',
-        participationScore: '',
-        activityScore: '',
-        fitnessIndex: '',
-        talentScore: '',
-        sprint_100m: '',
-        pushups: '',
-        plank_sec: '',
-        run_1km: '',
-        verificationStatus: 'VERIFIED'
-    }
-};
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    // Load user from localStorage on mount
-    const [user, setUser] = useState<User | null>(() => {
-        const savedUser = localStorage.getItem('athnexus_user');
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Save user to localStorage whenever it changes
+    // Verify Session (JWT Cookie) on Load
     useEffect(() => {
-        if (user) {
-            localStorage.setItem('athnexus_user', JSON.stringify(user));
-        } else {
-            localStorage.removeItem('athnexus_user');
-        }
-    }, [user]);
+        const verifySession = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    credentials: 'include' // Important to send cookies cross-origin
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.isAuthenticated) {
+                        setUser(data.user);
+                    }
+                }
+            } catch (error) {
+                console.error("Session verification failed", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    // Apply global themes and settings on app load
-    useEffect(() => {
-        const theme = localStorage.getItem('athnexus-theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-
-        const accent = localStorage.getItem('athnexus-accent') || '#a8e63d';
-        document.documentElement.style.setProperty('--accent-color', accent);
-
-        const font = localStorage.getItem('athnexus-fontsize') || 'M';
-        const sizes = { S: '14px', M: '16px', L: '18px' };
-        document.documentElement.style.fontSize = sizes[font as 'S' | 'M' | 'L'] || '16px';
+        verifySession();
     }, []);
 
+    // Placeholder local login function so the UI doesn't break
     const login = (email: string, password: string): boolean => {
-        // Check if credentials match any of the dummy accounts
-        const matchedUser = DUMMY_CREDENTIALS.find(
-            (cred) => cred.email === email && cred.password === password
-        );
-
-        if (matchedUser) {
-            // Check if user already has saved profile in localStorage
-            const savedUser = localStorage.getItem('athnexus_user');
-            const savedData = savedUser ? JSON.parse(savedUser) : null;
-
-            // If saved user exists and email matches, restore their profile
-            if (savedData && savedData.email === matchedUser.email) {
-                setUser(savedData);
-            } else {
-                // New login
-                // Special bypass for player1: assign dummy profile automatically
-                if (DUMMY_PROFILES[matchedUser.email]) {
-                    setUser({
-                        email: matchedUser.email,
-                        role: matchedUser.role,
-                        profile: DUMMY_PROFILES[matchedUser.email]
-                    });
-                } else {
-                    // Other users start with no profile
-                    setUser({
-                        email: matchedUser.email,
-                        role: matchedUser.role,
-                        profile: null
-                    });
-                }
-            }
+        if (email === 'verifier@athnexus.com' && password === 'verify123') {
+            setUser({ _id: '1', email, name: 'Raj', role: 'verifier', profile: null });
+            return true;
+        }
+        if (email.startsWith('player') && password === 'player123') {
+            setUser({ _id: '2', email, name: 'Demo Player', role: 'player', profile: null });
             return true;
         }
         return false;
     };
 
     const signup = (email: string, password: string): boolean => {
-        // For now, any signup succeeds as a player
         if (email && password.length >= 6) {
-            setUser({
-                email,
-                role: 'player',
-                profile: null,
-            });
+            setUser({ _id: Date.now().toString(), email, name: 'New User', role: 'player', profile: null });
             return true;
         }
         return false;
     };
 
-    const logout = () => {
-        setUser(null);
+    const logout = async () => {
+        try {
+            await fetch(`${API_URL}/api/auth/logout`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            setUser(null);
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
     };
 
-    const updateProfile = (profile: UserProfile) => {
+    const updateProfile = async (profile: UserProfile) => {
         if (user) {
-            setUser({
-                ...user,
-                profile,
-            });
+            setUser({ ...user, profile });
+            try {
+                await fetch(`${API_URL}/api/auth/profile`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profile),
+                    credentials: 'include'
+                });
+            } catch (error) {
+                console.error("Failed to save profile to database", error);
+            }
         }
     };
 
     const value: AuthContextType = {
         user,
         isAuthenticated: !!user,
+        isLoading,
         hasProfile: !!(user?.profile),
         login,
         signup,
