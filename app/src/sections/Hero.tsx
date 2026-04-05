@@ -1,9 +1,25 @@
 import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { isAuthenticated, user, hasProfile } = useAuth();
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    if (!isAuthenticated) {
+      navigate('/auth');
+    } else if (user?.role === 'verifier') {
+      navigate('/verifier/event-approval');
+    } else if (hasProfile) {
+      navigate('/dashboard');
+    } else {
+      navigate('/profile-setup');
+    }
+  };
 
   useEffect(() => {
     if (videoRef.current) {
@@ -56,7 +72,8 @@ const Hero = () => {
           <div className="flex flex-wrap gap-4 justify-center pt-4">
             <Button
               size="lg"
-              className="bg-lime-400 hover:bg-lime-500 text-[#0f172a] font-semibold px-8 h-12"
+              onClick={handleGetStarted}
+              className="bg-lime-400 hover:bg-lime-500 text-[#0f172a] font-semibold px-8 h-12 transition-all hover:scale-105"
             >
               Get Started
               <ArrowRight className="ml-2 w-5 h-5" />

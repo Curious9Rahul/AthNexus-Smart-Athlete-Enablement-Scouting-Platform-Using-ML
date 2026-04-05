@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
-import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, Shield } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -197,14 +197,25 @@ const AuthPage = ({ onSuccess, onCancel }: AuthPageProps) => {
                         )}
 
                         {!isSignUp && (
-                            <div className="bg-lime-400/10 border border-lime-400/30 rounded-lg p-4">
-                                <p className="text-lime-400 text-xs font-semibold mb-2">
-                                    🎮 Demo Accounts (Password: player123)
-                                </p>
-                                <div className="space-y-1">
-                                    <p className="text-white text-xs font-mono">player1@athnexus.com - Alex (Basketball)</p>
-                                    <p className="text-white text-xs font-mono">player2@athnexus.com - Sarah (Football)</p>
-                                    <p className="text-white text-xs font-mono">player3@athnexus.com - Michael (Cricket)</p>
+                            <div className="space-y-4 mb-6">
+                                <div className="bg-lime-400/10 border border-lime-400/30 rounded-lg p-4">
+                                    <p className="text-lime-400 text-xs font-semibold mb-2 flex items-center gap-1.5">
+                                        <span>🎮</span> Demo Accounts (Password: player123)
+                                    </p>
+                                    <div className="space-y-1">
+                                        <p className="text-white text-xs font-mono">player1@athnexus.com - Alex (Basketball)</p>
+                                        <p className="text-white text-xs font-mono">player2@athnexus.com - Sarah (Football)</p>
+                                        <p className="text-white text-xs font-mono">player3@athnexus.com - Michael (Cricket)</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-blue-400/10 border border-blue-400/30 rounded-lg p-4">
+                                    <p className="text-blue-400 text-xs font-semibold mb-2 flex items-center gap-1.5">
+                                        <Shield className="w-3.5 h-3.5" /> Verifier Account (Password: verify123)
+                                    </p>
+                                    <div className="space-y-1">
+                                        <p className="text-white text-xs font-mono">verifier@athnexus.com - Raj (Verifier)</p>
+                                    </div>
                                 </div>
                             </div>
                         )}

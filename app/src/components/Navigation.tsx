@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, User, LogOut, Globe, Search, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useLocation, Link } from 'react-router-dom';
 
 // ─── Language Data ────────────────────────────────────────────────────────────
 const LANGUAGES = [
@@ -181,6 +182,8 @@ interface NavigationProps {
 // ─── Navigation ───────────────────────────────────────────────────────────────
 const Navigation = ({ onSignInClick }: NavigationProps) => {
   const { isAuthenticated, user, logout } = useAuth();
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
   const [isScrolled, setIsScrolled]       = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -237,36 +240,38 @@ const Navigation = ({ onSignInClick }: NavigationProps) => {
 
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'bg-[#0f172a] border-b border-white/5 py-0'
-            : 'bg-gradient-to-b from-[#0f172a] via-[#0f172a]/85 to-transparent backdrop-blur-[2px] py-2'
+          isLandingPage
+            ? (isScrolled ? 'bg-[#0f172a] border-b border-white/5 py-0' : 'bg-gradient-to-b from-[#0f172a] via-[#0f172a]/85 to-transparent backdrop-blur-[2px] py-2')
+            : 'bg-[#0f172a] border-b border-white/5 py-0'
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
 
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-lime-400 flex items-center justify-center">
                 <span className="text-[#0f172a] font-bold">S</span>
               </div>
               <span className="text-white font-bold tracking-tight">
                 Ath<span className="text-lime-400">Nexus</span>
               </span>
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="text-gray-300 hover:text-white text-sm transition-colors"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
+            {isLandingPage && (
+              <nav className="hidden lg:flex items-center gap-8">
+                {navItems.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    className="text-gray-300 hover:text-white text-sm transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            )}
 
             {/* Desktop CTA + Language Selector */}
             <div className="hidden lg:flex items-center gap-3">
@@ -321,7 +326,7 @@ const Navigation = ({ onSignInClick }: NavigationProps) => {
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-[#0f172a] border-t border-white/5">
             <div className="px-6 py-6 space-y-4">
-              {navItems.map((item) => (
+              {isLandingPage && navItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}

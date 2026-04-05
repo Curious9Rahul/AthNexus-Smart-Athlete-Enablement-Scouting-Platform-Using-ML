@@ -44,6 +44,43 @@ interface User {
     profile: UserProfile | null;
 }
 
+// Dummy credentials for testing (4 different users)
+const DUMMY_CREDENTIALS: { email: string; password: string; name: string; sport?: string; role: Role }[] = [
+    {
+        email: 'player1@athnexus.com',
+        password: 'player123',
+        name: 'Alex Johnson',
+        sport: 'Basketball',
+        role: 'player'
+    },
+    {
+        email: 'player2@athnexus.com',
+        password: 'player123',
+        name: 'Sarah Martinez',
+        sport: 'Football',
+        role: 'player'
+    },
+    {
+        email: 'player3@athnexus.com',
+        password: 'player123',
+        name: 'Michael Chen',
+        sport: 'Cricket',
+        role: 'player'
+    },
+    {
+        email: 'verifier@athnexus.com',
+        password: 'verify123',
+        name: 'Raj',
+        role: 'verifier'
+    },
+    {
+        email: 'prasad@athnexus.com',
+        password: 'prasad123',
+        name: 'Prasad Rane',
+        role: 'verifier'
+    }
+];
+
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;

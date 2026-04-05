@@ -1,0 +1,65 @@
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+AthleteID,Name,Gender,Age,Department,Year,Sport,Position,ExperienceYears,CompetitionLevel,TournamentsPlayed,MatchesWon,MedalsWon,ActiveStatus,PerceivedSkill,Height_cm,Weight_kg,BMI,AchievementScore,ParticipationScore,ActivityScore,FitnessIndex,TalentScore,Sprint_100m,Pushups,Plank_sec,Run_1km,CompositeSkill,Gmail
+1,Rahul Patil,Male,20,IT,3,Football,Forward,5,Intercollege,8,3,4,Yes,8,175,70,22.9,75,70,65,78,80,12.4,30,90,280,,athlete.user264@gmail.com
+2,Aman Shah,Male,19,Computer,2,Cricket,Batsman,3,College,5,1,1,Yes,6,168,65,23,50,55,40,60,58,13.8,20,60,320,,athlete.user113@gmail.com
+3,Priya Desai,Female,21,EXTC,4,Athletics,Sprinter,6,State,10,5,6,Yes,9,162,55,21,90,85,80,88,92,11.9,35,110,250,,athlete.user743@gmail.com
+4,Karan Mehta,Male,20,Mechanical,3,Basketball,Guard,4,Intercollege,6,2,2,Yes,7,180,75,23.1,65,68,60,72,70,12.9,25,80,300,,athlete.user979@gmail.com
+5,Sneha Rao,Female,19,IT,2,Badminton,Single,2,District,4,1,1,Yes,6,160,52,20.3,45,30,40,52,48,14.2,15,45,350,,athlete.user530@gmail.com
+6,Kabir Singh,Male,22,Civil,4,Kabaddi,Raider,7,National,15,6,8,Yes,9,178,82,25.9,98,90,90,92,94,12.1,50,120,260,,athlete.user128@gmail.com
+7,Ananya Das,Female,20,Computer,3,Volleyball,Setter,3,Intercollege,7,2,1,Yes,7,170,60,20.8,62,50,70,65,63,13.5,22,75,310,,athlete.user228@gmail.com
+8,Vikram Malhotra,Male,21,Electrical,4,Football,Defender,5,District,9,3,2,Yes,8,182,78,23.5,72,70,70,76,73,12.7,35,95,290,,athlete.user477@gmail.com
+9,Zoya Khan,Female,19,EXTC,2,Cricket,Bowler,4,College,6,1,0,Yes,7,165,58,21.3,48,50,40,55,52,14.5,18,55,340,,athlete.user718@gmail.com
+10,Siddharth Goel,Male,22,Mechanical,4,Basketball,Forward,6,State,12,4,5,Yes,8,188,85,24,88,90,90,85,87,12.5,40,105,275,,athlete.user245@gmail.com
+11,Ananya Iyer,Female,19,IT,2,Badminton,Singles,3,Intercollege,7,3,2,Yes,8,162,54,20.6,68,70,65,72,76,14.2,22,80,330,50.7,athlete.user206@gmail.com
+12,Karan Mehta,Male,21,Mechanical,4,Basketball,Guard,5,State,12,5,3,Yes,8,186,82,23.7,82,88,85,84,85,12.6,42,120,275,58.3,athlete.user475@gmail.com
+13,Priya Nair,Female,20,EXTC,3,Volleyball,Setter,4,District,9,4,1,Yes,7,168,60,21.3,70,75,72,74,72,13.8,28,95,305,50.3,athlete.user292@gmail.com
+14,Arjun Singh,Male,22,Civil,4,Hockey,Midfielder,6,National,14,7,4,Yes,9,180,76,23.5,90,92,90,88,91,11.9,48,140,255,63.3,athlete.user910@gmail.com
+15,Meera Joshi,Female,18,Computer,1,Athletics,Sprinter,2,College,5,2,1,Yes,7,160,52,20.3,60,65,70,68,70,12.9,20,75,285,45.7,athlete.user178@gmail.com
+16,Rohan Kulkarni,Male,20,Electrical,3,Cricket,All-rounder,4,Intercollege,10,4,2,Yes,8,177,72,23,78,80,78,79,80,13.1,35,105,315,55.3,athlete.user833@gmail.com
+17,Sana Sheikh,Female,21,Chemical,4,Tennis,Singles,6,State,13,6,3,Yes,8,170,62,21.5,85,88,82,83,84,14,30,110,320,58.7,athlete.user701@gmail.com
+18,Vivek Rao,Male,19,IT,2,Football,Midfielder,3,College,6,2,0,Yes,7,174,68,22.5,62,66,70,70,67,12.8,32,100,295,45.3,athlete.user893@gmail.com
+19,Ishita Kapoor,Female,22,Mechanical,4,Swimming,Freestyle,7,National,15,8,5,Yes,9,166,58,21,92,90,88,89,90,13.9,25,130,310,63.7,athlete.user351@gmail.com
+20,Aditya Verma,Male,20,EXTC,3,Kabaddi,Raider,4,District,9,3,1,Yes,8,178,79,24.9,75,74,78,77,78,13.2,45,115,290,53.7,athlete.user675@gmail.com
+21,Neha Gupta,Female,19,Civil,2,Table Tennis,Singles,3,Intercollege,8,4,2,Yes,7,158,50,20,70,72,68,71,74,14.6,18,85,335,50.3,athlete.user764@gmail.com
+22,Saurabh Sharma,Male,21,Computer,4,Athletics,Middle-distance,5,State,11,5,2,Yes,8,183,74,22.1,80,84,86,82,81,12.2,40,130,245,56.3,athlete.user430@gmail.com
+23,Pooja Desai,Female,20,Electrical,3,Cricket,Batsman,4,College,7,2,1,Yes,7,163,55,20.7,64,68,66,69,70,14.3,20,90,350,47,athlete.user490@gmail.com
+24,Nikhil Bansal,Male,18,IT,1,Badminton,Doubles,2,College,5,2,0,Yes,6,172,66,22.3,58,60,62,65,66,13.9,28,85,320,43.3,athlete.user800@gmail.com
+25,Aditi Rao,Female,21,Mechanical,4,Basketball,Forward,6,State,12,6,3,Yes,8,176,67,21.6,84,86,84,82,86,13.4,34,125,285,59.3,athlete.user446@gmail.com
+26,Manav Chopra,Male,22,Civil,4,Volleyball,Spiker,6,District,10,4,1,Yes,7,190,86,23.8,76,78,80,79,79,12.7,46,135,275,54,athlete.user198@gmail.com
+27,Kavya Menon,Female,19,Chemical,2,Hockey,Defender,3,Intercollege,8,3,1,Yes,7,164,57,21.2,72,75,76,74,73,14.1,24,105,325,50.7,athlete.user261@gmail.com
+28,Siddhant Jain,Male,20,EXTC,3,Football,Defender,4,State,11,5,2,Yes,8,181,80,24.4,81,82,85,83,83,12.4,44,125,270,57.3,athlete.user787@gmail.com
+29,Riya Chatterjee,Female,22,Computer,4,Swimming,Backstroke,7,National,14,7,4,Yes,9,168,60,21.3,90,88,86,88,89,14.4,22,140,305,62.7,athlete.user802@gmail.com
+30,Harsh Vardhan,Male,19,Electrical,2,Athletics,Sprinter,3,Intercollege,7,3,1,Yes,7,176,71,22.9,72,74,78,76,74,11.8,38,110,250,51,athlete.user828@gmail.com
+31,Simran Kaur,Female,20,IT,3,Tennis,Doubles,4,District,9,4,2,Yes,8,169,59,20.7,78,80,76,79,80,14.2,26,115,330,55.3,athlete.user578@gmail.com
+32,Om Prakash,Male,21,Mechanical,4,Cricket,Bowler,5,State,12,5,2,Yes,8,179,77,24,83,85,82,84,84,12.9,41,120,300,58.3,athlete.user815@gmail.com
+33,Shreya Pillai,Female,18,Civil,1,Volleyball,Libero,2,College,5,1,0,Yes,6,157,49,19.9,55,60,58,62,60,15.1,14,70,380,40.3,athlete.user513@gmail.com
+34,Abhishek Dutta,Male,22,Chemical,4,Hockey,Forward,6,National,15,8,5,Yes,9,184,83,24.5,91,92,90,89,90,12,49,145,260,63.3,athlete.user726@gmail.com
+35,Nandini Saha,Female,21,EXTC,4,Badminton,Singles,6,State,13,6,3,Yes,8,161,53,20.4,82,84,78,81,83,13.7,24,120,315,57.7,athlete.user335@gmail.com
+36,Ishan Malhotra,Male,20,Computer,3,Basketball,Center,4,Intercollege,10,4,2,Yes,7,193,92,24.7,79,82,80,81,80,13.3,46,130,290,55.3,athlete.user683@gmail.com
+37,Farah Ali,Female,19,Electrical,2,Table Tennis,Doubles,3,College,6,2,1,Yes,7,159,51,20.2,63,66,62,67,69,14.8,16,90,345,46.3,athlete.user194@gmail.com
+38,Devansh Tripathi,Male,18,IT,1,Football,Forward,2,College,5,2,0,Yes,6,173,67,22.4,60,62,65,66,65,12.9,30,95,300,43.7,athlete.user369@gmail.com
+39,Tanvi Bhat,Female,22,Mechanical,4,Athletics,Long-distance,7,National,14,7,4,Yes,9,165,57,20.9,88,90,92,86,87,13.6,28,150,235,61.3,athlete.user956@gmail.com
+40,Ritwik Sen,Male,21,Civil,4,Kabaddi,All-rounder,5,District,10,4,1,Yes,7,177,78,24.9,77,76,80,78,79,13.4,47,120,285,54.3,athlete.user477@gmail.com
+41,Ayesha Rahman,Female,20,Chemical,3,Cricket,Wicketkeeper,4,Intercollege,9,4,2,Yes,8,164,56,20.8,76,78,74,77,79,14.4,23,110,340,54.3,athlete.user468@gmail.com
+42,Parth Agarwal,Male,22,EXTC,4,Tennis,Singles,6,National,15,8,4,Yes,9,182,75,22.6,90,91,86,88,92,12.5,44,140,270,63.7,athlete.user118@gmail.com
+43,Lavanya Reddy,Female,19,Computer,2,Swimming,Butterfly,3,District,8,3,1,Yes,7,167,59,21.2,74,76,78,75,76,14.7,20,120,325,52.3,athlete.user761@gmail.com
+44,Amanpreet Singh,Male,20,Electrical,3,Hockey,Defender,4,State,11,5,2,Yes,8,185,84,24.5,82,83,85,84,85,12.6,46,135,275,58.3,athlete.user311@gmail.com
+45,Sneha Kulkarni,Female,18,IT,1,Badminton,Doubles,2,College,5,2,0,Yes,6,160,52,20.3,58,62,60,64,63,15,16,80,360,42.3,athlete.user166@gmail.com
+46,Yash Thakur,Male,21,Mechanical,4,Basketball,Forward,5,State,12,5,2,Yes,8,188,86,24.3,84,86,84,83,86,12.8,45,130,285,59.3,athlete.user344@gmail.com
+47,Diya Sharma,Female,22,Civil,4,Volleyball,Spiker,6,National,14,7,4,Yes,9,175,66,21.6,90,92,88,87,89,13.5,32,140,295,62.7,athlete.user651@gmail.com
+48,Raghav Iyer,Male,19,Chemical,2,Athletics,Sprinter,3,Intercollege,7,3,1,Yes,7,178,73,23,74,76,80,77,75,11.7,40,115,245,52,athlete.user546@gmail.com
+49,Anushka Bose,Female,20,EXTC,3,Cricket,Bowler,4,District,9,3,1,Yes,7,163,54,20.3,70,72,70,71,73,14.6,21,105,345,50,athlete.user128@gmail.com
+50,Kunal Deshmukh,Male,22,Computer,4,Football,Goalkeeper,6,National,15,7,3,Yes,8,188,88,24.9,86,88,90,85,87,12.9,48,150,280,60.3,athlete.user507@gmail.com
+51,Mitali Ghosh,Female,19,Electrical,2,Table Tennis,Singles,3,Intercollege,8,4,2,Yes,8,157,49,19.9,75,78,72,76,77,14.9,17,95,340,53.3,athlete.user395@gmail.com
+52,Arnav Soni,Male,20,IT,3,Kabaddi,Raider,4,State,11,5,2,Yes,8,179,81,25.3,80,78,82,80,82,13,49,125,285,56.7,athlete.user720@gmail.com
+53,Niharika Das,Female,21,Mechanical,4,Swimming,Freestyle,6,State,13,6,3,Yes,8,170,61,21.1,85,86,84,84,86,14.3,24,145,310,59.7,athlete.user231@gmail.com
+54,Aryan Kapoor,Male,18,Civil,1,Volleyball,Setter,2,College,5,2,0,Yes,6,175,70,22.9,60,62,64,66,67,14,26,90,330,44.3,athlete.user690@gmail.com
+55,Ira Fernandes,Female,22,Chemical,4,Athletics,Middle-distance,7,National,14,7,4,Yes,9,168,58,20.6,89,91,92,87,88,12.8,30,155,240,62,athlete.user875@gmail.com
+56,Mohit Bhatia,Male,21,EXTC,4,Cricket,Batsman,5,Intercollege,10,4,2,Yes,7,176,73,23.6,78,80,76,79,80,13.7,34,110,325,55,athlete.user808@gmail.com
+57,Saloni Mishra,Female,18,Computer,1,Tennis,Singles,2,College,5,2,1,Yes,6,162,53,20.2,60,65,62,66,64,15.2,16,90,360,43.3,athlete.user527@gmail.com
+58,Lakshya Arora,Male,22,Electrical,4,Hockey,Midfielder,6,National,15,8,5,Yes,9,181,78,23.8,92,93,90,90,91,12.1,50,150,265,64,athlete.user623@gmail.com
+59,Pallavi Patil,Female,20,IT,3,Basketball,Guard,4,District,9,4,1,Yes,7,172,63,21.3,76,78,80,77,78,13.8,30,115,305,53.7,athlete.user242@gmail.com
+60,Viraj Naik,Male,19,Mechanical,2,Badminton,Singles,3,Intercollege,8,3,1,Yes,7,178,70,22.1,72,74,70,73,75,13.6,32,110,315,51.3,athlete.user254@gmail.com
+61,Prasad Rane,Male,20,IT,3,Cricket,Batsman,4,College,5,3,2,Yes,7,175,70,22.9,75,80,70,72,75,13.5,35,100,300,55.4,23104009@apsit.edu.in
+62,Raj Patil,Male,19,Computer,2,Football,Midfielder,3,Intercollege,7,4,1,Yes,8,170,68,23.5,80,85,75,78,80,12.8,40,120,290,58.2,23104101@apsit.edu.in
+63,Soham Pawar,Male,21,EXTC,4,Basketball,Guard,5,State,10,6,3,Yes,9,185,78,22.8,88,90,85,82,85,12.5,45,130,280,65.1,23104019@apsit.edu.in

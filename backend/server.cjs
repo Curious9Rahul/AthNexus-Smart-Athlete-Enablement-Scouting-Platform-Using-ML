@@ -1,6 +1,19 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { Resend } = require('resend');
+const fs = require('fs');
+const path = require('path');
+
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 5000;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+app.use(cors());
+app.use(express.json());
 
 dotenv.config();
 
@@ -114,6 +127,339 @@ function computeStatus(event) {
 const saveEvents = (events) => {
   fs.writeFileSync(eventsFilePath, JSON.stringify(events, null, 2), 'utf8');
 };
+
+// ── Users helpers ──────────────────────────────────────────────
+const usersFilePath = path.join(__dirname, 'data', 'users.json');
+const getUsers = () => {
+  if (fs.existsSync(usersFilePath)) {
+    return JSON.parse(fs.readFileSync(usersFilePath, 'utf8'));
+  }
+  return [];
+};
+const saveUsers = (users) => {
+  fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2), 'utf8');
+};
+
+// ── Luma-style email builders ──────────────────────────────────
+
+function buildRegistrationApprovedEmail(athleteName, event) {
+  const startDate = new Date(event.start_date);
+  const month = startDate.toLocaleString('en-IN', { month: 'short' }).toUpperCase();
+  const day = startDate.getDate();
+  const dateStr = startDate.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+  const timeStr = startDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;margin:0 auto;background:#0d1520;">
+  <tr><td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+    <span style="font-size:16px;font-weight:700;color:#a8e63d;">AthNexus</span>
+  </td></tr>
+  <tr><td style="padding:28px 24px 16px;background:#111a28;">
+    <div style="display:inline-block;background:#a8e63d;color:#0d1520;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">✅ Registration Confirmed</div>
+    <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#fff;line-height:1.2;">${event.image_emoji || '🏆'} ${event.title}</h1>
+    <p style="margin:0;font-size:15px;color:#8aaabf;">You&rsquo;re officially registered. See you there!</p>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  <tr><td style="padding:20px 24px 12px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:top;padding-right:14px;">
+        <div style="background:#1e2e40;border-radius:8px;width:48px;text-align:center;overflow:hidden;">
+          <div style="background:#a8e63d;padding:3px 0;font-size:10px;font-weight:700;color:#0d1520;text-transform:uppercase;">${month}</div>
+          <div style="padding:6px 0;font-size:22px;font-weight:800;color:#fff;">${day}</div>
+        </div>
+      </td>
+      <td style="vertical-align:middle;">
+        <p style="margin:0;font-size:15px;font-weight:700;color:#fff;">${dateStr}</p>
+        <p style="margin:4px 0 0;font-size:13px;color:#5a8aaa;">${timeStr} IST</p>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:4px 24px 16px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:top;padding-right:14px;">
+        <div style="background:#1e2e40;border-radius:8px;width:48px;height:48px;text-align:center;line-height:48px;font-size:20px;">📍</div>
+      </td>
+      <td style="vertical-align:middle;">
+        <p style="margin:0;font-size:15px;font-weight:700;color:#fff;">${event.venue}</p>
+        <p style="margin:3px 0 0;font-size:13px;color:#5a8aaa;">${event.city}, ${event.state}</p>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  <tr><td style="padding:16px 24px 8px;">
+    <p style="margin:0;font-size:13px;color:#5a8aaa;">Prize: <span style="color:#ffd044;font-weight:600;">${event.prize}</span></p>
+  </td></tr>
+  <tr><td style="padding:12px 24px 28px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="padding-right:10px;"><a href="${appUrl}/dashboard/events/${event.id}" style="display:inline-block;background:#a8e63d;color:#0d1520;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">View Event</a></td>
+      <td><a href="${appUrl}/dashboard/my-events" style="display:inline-block;background:#1e2e40;color:#c0d4e8;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:600;border:1px solid #2a3e52;">My Events</a></td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #1e2e40;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#5a8aaa;">Best of luck, ${athleteName}! — AthNexus Verifier Team</p>
+  </td></tr>
+</table></body></html>`;
+}
+
+function buildRegistrationRejectedEmail(athleteName, event, reason) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;margin:0 auto;background:#0d1520;">
+  <tr><td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+    <span style="font-size:16px;font-weight:700;color:#a8e63d;">AthNexus</span>
+  </td></tr>
+  <tr><td style="padding:28px 24px 16px;background:#111a28;">
+    <div style="display:inline-block;background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">❌ Registration Not Approved</div>
+    <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#fff;line-height:1.2;">${event.image_emoji || '🏆'} ${event.title}</h1>
+    <p style="margin:0;font-size:15px;color:#8aaabf;">Unfortunately your registration was not approved this time.</p>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  ${reason ? `<tr><td style="padding:20px 24px;">
+    <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#5a8aaa;text-transform:uppercase;letter-spacing:.06em;">Reason</p>
+    <p style="margin:0;font-size:14px;color:#e0eaf5;background:#1e2e40;padding:12px 16px;border-radius:8px;border-left:3px solid #f87171;">${reason}</p>
+  </td></tr>` : ''}
+  <tr><td style="padding:12px 24px 28px;">
+    <a href="${appUrl}/dashboard/events" style="display:inline-block;background:#a8e63d;color:#0d1520;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">Explore Other Events</a>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #1e2e40;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#5a8aaa;">Keep training, ${athleteName}! — AthNexus Verifier Team</p>
+  </td></tr>
+</table></body></html>`;
+}
+
+function buildEventApprovedEmail(creatorName, event) {
+  const startDate = new Date(event.start_date);
+  const endDate = new Date(event.end_date);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;margin:0 auto;background:#0d1520;">
+  <tr><td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+    <span style="font-size:16px;font-weight:700;color:#a8e63d;">AthNexus</span>
+  </td></tr>
+  <tr><td style="padding:28px 24px 16px;background:#111a28;">
+    <div style="display:inline-block;background:#a8e63d;color:#0d1520;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">🎉 Event Approved!</div>
+    <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#fff;line-height:1.2;">${event.image_emoji || '🏆'} ${event.title}</h1>
+    <p style="margin:0;font-size:15px;color:#8aaabf;">is now live on AthNexus. Athletes can discover and register for it now.</p>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  <tr><td style="padding:20px 24px 8px;">
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">📅 ${startDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} – ${endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}</p>
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">📍 ${event.venue}, ${event.city}</p>
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">👥 Max ${event.max_participants} participants</p>
+  </td></tr>
+  <tr><td style="padding:12px 24px 28px;">
+    <a href="${appUrl}/dashboard/events/${event.id}" style="display:inline-block;background:#a8e63d;color:#0d1520;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">View Your Event</a>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #1e2e40;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#5a8aaa;">— AthNexus Verifier Team</p>
+  </td></tr>
+</table></body></html>`;
+}
+
+function buildEventRejectedEmail(creatorName, event, reason) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;margin:0 auto;background:#0d1520;">
+  <tr><td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+    <span style="font-size:16px;font-weight:700;color:#a8e63d;">AthNexus</span>
+  </td></tr>
+  <tr><td style="padding:28px 24px 16px;background:#111a28;">
+    <h1 style="margin:0 0 6px;font-size:22px;font-weight:800;color:#fff;line-height:1.2;">Your event was not approved</h1>
+    <p style="margin:0;font-size:15px;color:#8aaabf;">${event.image_emoji || '🏆'} ${event.title}</p>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  ${reason ? `<tr><td style="padding:20px 24px;">
+    <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#5a8aaa;text-transform:uppercase;letter-spacing:.06em;">Reason</p>
+    <p style="margin:0;font-size:14px;color:#e0eaf5;background:#1e2e40;padding:12px 16px;border-radius:8px;border-left:3px solid #f87171;">${reason}</p>
+  </td></tr>` : ''}
+  <tr><td style="padding:8px 24px 12px;"><p style="margin:0;font-size:13px;color:#8aaabf;">You can edit and resubmit from My Events page.</p></td></tr>
+  <tr><td style="padding:12px 24px 28px;">
+    <a href="${appUrl}/dashboard/my-events" style="display:inline-block;background:#a8e63d;color:#0d1520;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">Go to My Events</a>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #1e2e40;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#5a8aaa;">— AthNexus Verifier Team</p>
+  </td></tr>
+</table></body></html>`;
+}
+
+function buildDeadlineReminderEmail(recipientName, event, hoursLeft) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173';
+  const startDate = new Date(event.start_date);
+  const month = startDate.toLocaleString('en-IN', { month: 'short' }).toUpperCase();
+  const day = startDate.getDate();
+  const timeStr = startDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const timeLeft = hoursLeft > 24 ? `${Math.floor(hoursLeft/24)} days` : `${Math.floor(hoursLeft)} hours`;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;margin:0 auto;background:#0d1520;">
+  <tr><td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+    <span style="font-size:16px;font-weight:700;color:#a8e63d;">AthNexus</span>
+  </td></tr>
+  <tr><td style="padding:28px 24px 16px;background:#111a28;">
+    <div style="display:inline-block;background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">⏰ Deadline Approaching!</div>
+    <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#fff;line-height:1.2;">${event.image_emoji || '🏆'} ${event.title}</h1>
+    <p style="margin:0;font-size:15px;color:#fb923c;font-weight:600;">Registration closes in ${timeLeft}</p>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  <tr><td style="padding:20px 24px 12px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:top;padding-right:14px;">
+        <div style="background:#1e2e40;border-radius:8px;width:48px;text-align:center;overflow:hidden;">
+          <div style="background:#a8e63d;padding:3px 0;font-size:10px;font-weight:700;color:#0d1520;text-transform:uppercase;">${month}</div>
+          <div style="padding:6px 0;font-size:22px;font-weight:800;color:#fff;">${day}</div>
+        </div>
+      </td>
+      <td style="vertical-align:middle;">
+        <p style="margin:0;font-size:13px;color:#8aaabf;">${timeStr} IST</p>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:4px 24px 8px;">
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">📍 ${event.venue}, ${event.city}</p>
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">🏆 ${event.prize}</p>
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">👥 ${event.registered_count || 0}/${event.max_participants} spots taken</p>
+  </td></tr>
+  <tr><td style="padding:12px 24px 28px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="padding-right:10px;"><a href="${appUrl}/dashboard/events/${event.id}" style="display:inline-block;background:#a8e63d;color:#0d1520;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">Register Now</a></td>
+      <td><a href="${appUrl}/dashboard/events" style="display:inline-block;background:#1e2e40;color:#c0d4e8;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:600;border:1px solid #2a3e52;">View Event</a></td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #1e2e40;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#5a8aaa;">Don&rsquo;t miss out! — AthNexus Team</p>
+  </td></tr>
+</table></body></html>`;
+}
+
+function buildUpcomingReminderEmail(recipientName, event) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5173';
+  const startDate = new Date(event.start_date);
+  const month = startDate.toLocaleString('en-IN', { month: 'short' }).toUpperCase();
+  const day = startDate.getDate();
+  const dateStr = startDate.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+  const timeStr = startDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const daysLeft = Math.ceil((startDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0d1520;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;margin:0 auto;background:#0d1520;">
+  <tr><td style="padding:20px 24px;border-bottom:1px solid #1e2e40;">
+    <span style="font-size:16px;font-weight:700;color:#a8e63d;">AthNexus</span>
+  </td></tr>
+  <tr><td style="padding:28px 24px 16px;background:#111a28;">
+    <div style="display:inline-block;background:rgba(96,165,250,0.15);color:#93c5fd;border:1px solid rgba(96,165,250,0.3);font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">📅 Coming Up!</div>
+    <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#fff;line-height:1.2;">${event.image_emoji || '🏆'} ${event.title}</h1>
+    <p style="margin:0;font-size:15px;color:#8aaabf;">is starting in ${daysLeft > 0 ? daysLeft + ' day' + (daysLeft > 1 ? 's' : '') : 'less than a day'}.</p>
+  </td></tr>
+  <tr><td style="padding:0 24px;"><hr style="border:none;border-top:1px solid #1e2e40;margin:0;"></td></tr>
+  <tr><td style="padding:20px 24px 12px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:top;padding-right:14px;">
+        <div style="background:#1e2e40;border-radius:8px;width:48px;text-align:center;overflow:hidden;">
+          <div style="background:#a8e63d;padding:3px 0;font-size:10px;font-weight:700;color:#0d1520;text-transform:uppercase;">${month}</div>
+          <div style="padding:6px 0;font-size:22px;font-weight:800;color:#fff;">${day}</div>
+        </div>
+      </td>
+      <td style="vertical-align:middle;">
+        <p style="margin:0;font-size:15px;font-weight:700;color:#fff;">${dateStr}</p>
+        <p style="margin:4px 0 0;font-size:13px;color:#5a8aaa;">${timeStr} IST</p>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:4px 24px 8px;">
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">📍 ${event.venue}, ${event.city}</p>
+    <p style="margin:4px 0;font-size:13px;color:#8aaabf;">🏆 ${event.prize}</p>
+  </td></tr>
+  <tr><td style="padding:0 24px 16px;">
+    <div style="background:#1e2e40;border-radius:10px;padding:14px 16px;margin-top:8px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#5a8aaa;text-transform:uppercase;letter-spacing:.05em;">Preparation Tips</p>
+      <p style="margin:3px 0;font-size:13px;color:#c0d4e8;">• Arrive 30 minutes early</p>
+      <p style="margin:3px 0;font-size:13px;color:#c0d4e8;">• Carry your ID proof</p>
+      <p style="margin:3px 0;font-size:13px;color:#c0d4e8;">• Check venue on maps</p>
+    </div>
+  </td></tr>
+  <tr><td style="padding:12px 24px 28px;">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="padding-right:10px;"><a href="${appUrl}/dashboard/events/${event.id}" style="display:inline-block;background:#a8e63d;color:#0d1520;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">View Event Details</a></td>
+      <td><a href="${appUrl}/dashboard/my-events" style="display:inline-block;background:#1e2e40;color:#c0d4e8;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:600;border:1px solid #2a3e52;">My Ticket</a></td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #1e2e40;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#5a8aaa;">Best of luck, ${recipientName}! — AthNexus Team</p>
+  </td></tr>
+</table></body></html>`;
+}
+
+
+
+// ── User Management Endpoints ─────────────────────────────────
+
+app.get('/api/admin/users', (req, res) => {
+  res.json(getUsers());
+});
+
+app.get('/api/admin/users/:id', (req, res) => {
+  const user = getUsers().find(u => u.athleteId === req.params.id);
+  if (user) res.json(user);
+  else res.status(404).json({ error: 'User not found' });
+});
+
+app.patch('/api/admin/users/:id/ban', (req, res) => {
+  const { reason } = req.body;
+  const users = getUsers();
+  const idx = users.findIndex(u => u.athleteId === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'User not found' });
+  users[idx].status = 'BANNED';
+  users[idx].bannedAt = new Date().toISOString();
+  users[idx].banReason = reason || null;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+app.patch('/api/admin/users/:id/unban', (req, res) => {
+  const users = getUsers();
+  const idx = users.findIndex(u => u.athleteId === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'User not found' });
+  users[idx].status = 'ACTIVE';
+  users[idx].bannedAt = null;
+  users[idx].banReason = null;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+app.patch('/api/admin/users/:id/freeze', (req, res) => {
+  const { reason } = req.body;
+  const users = getUsers();
+  const idx = users.findIndex(u => u.athleteId === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'User not found' });
+  users[idx].status = 'FROZEN';
+  users[idx].frozenAt = new Date().toISOString();
+  users[idx].frozenReason = reason || null;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+app.patch('/api/admin/users/:id/unfreeze', (req, res) => {
+  const users = getUsers();
+  const idx = users.findIndex(u => u.athleteId === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'User not found' });
+  users[idx].status = 'ACTIVE';
+  users[idx].frozenAt = null;
+  users[idx].frozenReason = null;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+app.delete('/api/admin/users/:id', (req, res) => {
+  const users = getUsers();
+  const filtered = users.filter(u => u.athleteId !== req.params.id);
+  if (filtered.length === users.length) return res.status(404).json({ error: 'User not found' });
+  saveUsers(filtered);
+  res.json({ success: true });
+});
 
 app.get('/api/events', (req, res) => {
   const events = getEvents().map(event => ({
@@ -303,11 +649,31 @@ app.patch('/api/verifier/events/:id/approve', (req, res) => {
     events[index].approval_status = "APPROVED";
     saveEvents(events);
     res.json({ success: true, message: 'Event approved' });
+    // Send email to event creator if athlete-created
+    const event = events[index];
+    if (event.created_by_role === 'athlete' && event.created_by) {
+      const users = getUsers();
+      const creator = users.find(u => u.email === event.created_by);
+      if (creator) {
+        try {
+          await resend.emails.send({
+            from: `AthNexus <${fromEmail}>`,
+            to: creator.email,
+            subject: `🎉 Your event is now live — ${event.title}`,
+            html: buildEventApprovedEmail(creator.name, event)
+          });
+          console.log(`[RESEND] Event approval email sent to ${creator.email}`);
+        } catch (e) {
+          console.error('[RESEND] Event approval email failed', e.message);
+        }
+      }
+    }
   } else {
     res.status(404).json({ error: 'Event not found' });
   }
 });
 
+app.patch('/api/verifier/events/:id/reject', async (req, res) => {
 app.patch('/api/verifier/events/:id/reject', (req, res) => {
   const { reason } = req.body;
   const events = getEvents();
@@ -317,6 +683,25 @@ app.patch('/api/verifier/events/:id/reject', (req, res) => {
     events[index].reject_reason = reason;
     saveEvents(events);
     res.json({ success: true, message: 'Event rejected' });
+    // Send email to event creator if athlete-created
+    const event = events[index];
+    if (event.created_by_role === 'athlete' && event.created_by) {
+      const users = getUsers();
+      const creator = users.find(u => u.email === event.created_by);
+      if (creator) {
+        try {
+          await resend.emails.send({
+            from: `AthNexus <${fromEmail}>`,
+            to: creator.email,
+            subject: `Update on your event submission — ${event.title}`,
+            html: buildEventRejectedEmail(creator.name, event, reason)
+          });
+          console.log(`[RESEND] Event rejection email sent to ${creator.email}`);
+        } catch (e) {
+          console.error('[RESEND] Event rejection email failed', e.message);
+        }
+      }
+    }
   } else {
     res.status(404).json({ error: 'Event not found' });
   }
@@ -336,6 +721,9 @@ app.get('/api/verifier/registrations/pending', (req, res) => {
             athleteId: reg.athleteId,
             athleteName: reg.athleteName,
             athleteEmail: reg.athleteEmail,
+            registeredAt: reg.registeredAt,
+            reg_status: reg.reg_status,
+            formData: reg.formData || {}
             registeredAt: reg.registeredAt
           });
         }
@@ -343,6 +731,34 @@ app.get('/api/verifier/registrations/pending', (req, res) => {
     }
   });
   res.json(pendingRegs);
+});
+
+// NEW: Processed (approved/rejected) registrations
+app.get('/api/verifier/registrations/processed', (req, res) => {
+  const events = getEvents();
+  const processedRegs = [];
+  events.forEach(event => {
+    if (event.registrations && Array.isArray(event.registrations)) {
+      event.registrations.forEach(reg => {
+        if (reg.reg_status === 'APPROVED' || reg.reg_status === 'REJECTED') {
+          processedRegs.push({
+            eventId: event.id,
+            eventTitle: event.title,
+            athleteId: reg.athleteId,
+            athleteName: reg.athleteName,
+            athleteEmail: reg.athleteEmail,
+            registeredAt: reg.registeredAt,
+            reg_status: reg.reg_status,
+            reject_reason: reg.reject_reason,
+            processedAt: reg.processedAt || reg.registeredAt,
+            formData: reg.formData || {}
+          });
+        }
+      });
+    }
+  });
+  processedRegs.sort((a, b) => new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime());
+  res.json(processedRegs);
 });
 
 app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req, res) => {
@@ -356,6 +772,10 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
     
     if (regIndex !== -1 && regIndex !== undefined) {
       event.registrations[regIndex].reg_status = "APPROVED";
+      event.registrations[regIndex].processedAt = new Date().toISOString();
+      saveEvents(events);
+      
+      // Send confirmation email (Luma-style)
       saveEvents(events);
       
       // Send confirmation email
@@ -364,6 +784,10 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
       if (athleteEmail) {
         try {
           await resend.emails.send({
+            from: `AthNexus <${fromEmail}>`,
+            to: athleteEmail,
+            subject: `✅ Registration Confirmed — ${event.title}`,
+            html: buildRegistrationApprovedEmail(athleteName, event)
             from: `AthNexus Alerts <${fromEmail}>`,
             to: athleteEmail,
             subject: `✅ Your registration is confirmed — ${event.title}`,
@@ -397,6 +821,10 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/reject', async (req, 
     if (regIndex !== -1 && regIndex !== undefined) {
       event.registrations[regIndex].reg_status = "REJECTED";
       event.registrations[regIndex].reject_reason = reason;
+      event.registrations[regIndex].processedAt = new Date().toISOString();
+      saveEvents(events);
+      
+      // Send rejection email (Luma-style)
       saveEvents(events);
       
       // Send rejection email
@@ -404,6 +832,11 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/reject', async (req, 
       const athleteName = event.registrations[regIndex].athleteName;
       if (athleteEmail) {
         try {
+          await resend.emails.send({
+            from: `AthNexus <${fromEmail}>`,
+            to: athleteEmail,
+            subject: `Update on your registration — ${event.title}`,
+            html: buildRegistrationRejectedEmail(athleteName, event, reason)
           // Reusing the same helper, though we could make a dedicated one
           await resend.emails.send({
             from: `AthNexus Alerts <${fromEmail}>`,
@@ -730,6 +1163,78 @@ app.post('/api/update-status', async (req, res) => {
     }
     
     res.json({ success: true, message: 'Status updated' });
+});
+
+// ── Feature 5: Deadline & Upcoming Reminder Emails ──────────────
+// TODO: call this via cron when deadline - 72h
+app.post('/api/emails/deadline-reminder', async (req, res) => {
+  const { eventId } = req.body;
+  const events = getEvents();
+  const event = events.find(e => e.id === eventId);
+  if (!event) return res.status(404).json({ error: 'Event not found' });
+
+  const deadline = new Date(event.deadline);
+  const hoursLeft = (deadline.getTime() - Date.now()) / (1000 * 60 * 60);
+
+  // Collect recipients: APPROVED registrants + sport-matched users who haven't registered
+  const registeredEmails = new Set(
+    (event.registrations || []).map(r => typeof r === 'string' ? r : r.athleteEmail)
+  );
+  const approvedRegs = (event.registrations || []).filter(r => typeof r !== 'string' && r.reg_status === 'APPROVED');
+  const users = getUsers();
+  const sportMatched = users.filter(u => u.sport === event.sport && !registeredEmails.has(u.email) && u.status === 'ACTIVE');
+
+  const allRecipients = [
+    ...approvedRegs.map(r => ({ email: r.athleteEmail, name: r.athleteName })),
+    ...sportMatched.map(u => ({ email: u.email, name: u.name }))
+  ];
+
+  let sent = 0, failed = 0;
+  for (const recipient of allRecipients) {
+    try {
+      await resend.emails.send({
+        from: `AthNexus <${fromEmail}>`,
+        to: recipient.email,
+        subject: `⏰ Last chance! ${event.title} closes soon`,
+        html: buildDeadlineReminderEmail(recipient.name, event, hoursLeft)
+      });
+      sent++;
+    } catch (e) {
+      console.error(`[RESEND] Deadline reminder failed for ${recipient.email}:`, e.message);
+      failed++;
+    }
+  }
+  console.log(`[RESEND] Deadline reminder: sent=${sent}, failed=${failed}`);
+  res.json({ success: true, sent, failed });
+});
+
+// TODO: call this via cron when startDate - 24h
+app.post('/api/emails/upcoming-reminder', async (req, res) => {
+  const { eventId } = req.body;
+  const events = getEvents();
+  const event = events.find(e => e.id === eventId);
+  if (!event) return res.status(404).json({ error: 'Event not found' });
+
+  // Send only to APPROVED registrants
+  const approvedRegs = (event.registrations || []).filter(r => typeof r !== 'string' && r.reg_status === 'APPROVED');
+
+  let sent = 0, failed = 0;
+  for (const reg of approvedRegs) {
+    try {
+      await resend.emails.send({
+        from: `AthNexus <${fromEmail}>`,
+        to: reg.athleteEmail,
+        subject: `📅 Your event is coming up — ${event.title}`,
+        html: buildUpcomingReminderEmail(reg.athleteName, event)
+      });
+      sent++;
+    } catch (e) {
+      console.error(`[RESEND] Upcoming reminder failed for ${reg.athleteEmail}:`, e.message);
+      failed++;
+    }
+  }
+  console.log(`[RESEND] Upcoming reminder: sent=${sent}, failed=${failed}`);
+  res.json({ success: true, sent, failed });
 });
 
 app.listen(port, () => {
