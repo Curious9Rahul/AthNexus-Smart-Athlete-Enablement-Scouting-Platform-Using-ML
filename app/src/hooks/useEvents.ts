@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import type { RegistrationField } from '@/types/registration';
 import { toast } from 'sonner';
 
 export interface EventRegistration {
@@ -8,6 +9,7 @@ export interface EventRegistration {
   registeredAt: string;
   reg_status: "PENDING" | "APPROVED" | "REJECTED";
   reject_reason?: string;
+  formData?: Record<string, string>;
 }
 
 export interface AppEvent {
@@ -35,6 +37,7 @@ export interface AppEvent {
   created_by_role: "admin" | "athlete";
   created_at: string;
   registrations?: EventRegistration[] | string[];
+  registration_fields?: RegistrationField[];
 }
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -77,16 +80,22 @@ export function useEvents() {
   const pendingEvents = events.filter(e => e.approval_status === 'PENDING');
 
   // Actions
-  async function registerForEvent(eventId: string, athleteData: { athleteId: string | number, athleteName: string, athleteEmail: string }) {
+  async function registerForEvent(
+    eventId: string,
+    athleteData: { athleteId: string | number, athleteName: string, athleteEmail: string },
+    formData?: Record<string, string>
+  ) {
     try {
+      const payload = formData
+        ? { ...athleteData, formData, submittedAt: new Date().toISOString() }
+        : athleteData;
       const response = await fetch(`${API_BASE_URL}/events/${eventId}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(athleteData)
+        body: JSON.stringify(payload)
       });
       if (!response.ok) throw new Error('Registration failed');
       await fetchEvents();
-      toast.success('🎉 Registered! Awaiting verifier approval.');
       return true;
     } catch (err: any) {
       toast.error(err.message || 'Failed to register');

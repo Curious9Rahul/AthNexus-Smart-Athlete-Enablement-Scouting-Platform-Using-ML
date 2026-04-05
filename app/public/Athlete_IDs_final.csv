@@ -60,4 +60,6 @@ AthleteID,Name,Gender,Age,Department,Year,Sport,Position,ExperienceYears,Competi
 58,Lakshya Arora,Male,22,Electrical,4,Hockey,Midfielder,6,National,15,8,5,Yes,9,181,78,23.8,92,93,90,90,91,12.1,50,150,265,64,athlete.user623@gmail.com
 59,Pallavi Patil,Female,20,IT,3,Basketball,Guard,4,District,9,4,1,Yes,7,172,63,21.3,76,78,80,77,78,13.8,30,115,305,53.7,athlete.user242@gmail.com
 60,Viraj Naik,Male,19,Mechanical,2,Badminton,Singles,3,Intercollege,8,3,1,Yes,7,178,70,22.1,72,74,70,73,75,13.6,32,110,315,51.3,athlete.user254@gmail.com
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,athlete.user658@gmail.com
+61,Prasad Rane,Male,20,IT,3,Cricket,Batsman,4,College,5,3,2,Yes,7,175,70,22.9,75,80,70,72,75,13.5,35,100,300,55.4,23104009@apsit.edu.in
+62,Raj Patil,Male,19,Computer,2,Football,Midfielder,3,Intercollege,7,4,1,Yes,8,170,68,23.5,80,85,75,78,80,12.8,40,120,290,58.2,23104101@apsit.edu.in
+63,Soham Pawar,Male,21,EXTC,4,Basketball,Guard,5,State,10,6,3,Yes,9,185,78,22.8,88,90,85,82,85,12.5,45,130,280,65.1,23104019@apsit.edu.in

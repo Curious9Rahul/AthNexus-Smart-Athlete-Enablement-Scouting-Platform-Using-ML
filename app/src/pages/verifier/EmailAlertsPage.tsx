@@ -27,6 +27,8 @@ export default function EmailAlertsPage() {
     // Event Selection State
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
     const [eventSearch, setEventSearch] = useState('');
+    const [isSendingDeadline, setIsSendingDeadline] = useState(false);
+    const [isSendingUpcoming, setIsSendingUpcoming] = useState(false);
 
     const uniqueSports = Array.from(new Set(athletes.map(a => a.sport)));
     const uniqueLevels = Array.from(new Set(athletes.map(a => a.competitionLevel)));
@@ -139,6 +141,29 @@ Login to AthNexus to register!`;
             toast.error("Network error while sending emails.");
         } finally {
             setIsSending(false);
+        }
+    };
+
+    const sendReminder = async (type: 'deadline' | 'upcoming') => {
+        if (!selectedEvent) { toast.error('Please select an event first.'); return; }
+        const setter = type === 'deadline' ? setIsSendingDeadline : setIsSendingUpcoming;
+        setter(true);
+        try {
+            const res = await fetch(`http://localhost:5000/api/emails/${type}-reminder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eventId: selectedEvent.id })
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success(type === 'deadline' ? `Deadline reminder sent to ${data.sent} recipient(s)!` : `Upcoming reminder sent to ${data.sent} athlete(s)!`);
+            } else {
+                toast.error('Failed to send reminder.');
+            }
+        } catch {
+            toast.error('Network error while sending reminder.');
+        } finally {
+            setter(false);
         }
     };
 
@@ -391,6 +416,30 @@ Login to AthNexus to register!`;
                                     <div className="text-center py-8 text-gray-500 text-sm">No events found matching criteria.</div>
                                 )}
                             </div>
+
+                            {/* ─ Quick Reminders ─ */}
+                            {selectedEvent && (
+                                <div className="shrink-0 border-t border-white/10 pt-4 space-y-3">
+                                    <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Quick Reminders</p>
+                                    <p className="text-[11px] text-gray-600">(for selected: <span className="text-gray-400 font-bold">{selectedEvent.title}</span>)</p>
+                                    <button
+                                        id="btn-deadline-reminder"
+                                        onClick={() => sendReminder('deadline')}
+                                        disabled={isSendingDeadline}
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-400 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSendingDeadline ? '⏳ Sending...' : '⏰ Send Deadline Reminder'}
+                                    </button>
+                                    <button
+                                        id="btn-upcoming-reminder"
+                                        onClick={() => sendReminder('upcoming')}
+                                        disabled={isSendingUpcoming}
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSendingUpcoming ? '⏳ Sending...' : '📅 Send Upcoming Reminder'}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

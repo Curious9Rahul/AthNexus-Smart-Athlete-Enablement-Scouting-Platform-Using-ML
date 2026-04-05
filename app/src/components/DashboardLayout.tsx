@@ -1,11 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import { Toaster } from 'sonner';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import Chatbot from '@/components/Chatbot';
 
 const DashboardLayout = () => {
     return (
-        <div className="flex min-h-screen bg-[#0f172a] text-white">
+        <div className="flex bg-[#0f172a] text-white pt-16 lg:pt-20" style={{ minHeight: '100vh' }}>
             {/* Sidebar */}
             <DashboardSidebar />
 

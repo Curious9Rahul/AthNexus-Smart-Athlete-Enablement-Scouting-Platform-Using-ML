@@ -3,7 +3,7 @@ import DashboardSidebar from '@/components/DashboardSidebar';
 
 const VerifierLayout = () => {
     return (
-        <div className="flex min-h-screen bg-[#0f172a] text-white">
+        <div className="flex bg-[#0f172a] text-white pt-16 lg:pt-20" style={{ minHeight: '100vh' }}>
             {/* Sidebar */}
             <DashboardSidebar />
 

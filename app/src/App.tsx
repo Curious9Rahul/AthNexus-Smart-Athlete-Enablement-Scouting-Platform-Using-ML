@@ -33,6 +33,8 @@ import EmailAlertsPage from './pages/verifier/EmailAlertsPage';
 import CreateEventPageVerifier from './pages/verifier/CreateEventPage';
 
 import { Toaster, toast } from 'sonner';
+import { AthNexusChat } from './components/AthNexusChat';
+import UserManagementPage from './pages/verifier/UserManagementPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
@@ -56,10 +58,9 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   return <>{children}</>;
 };
 
-function LandingPage({ onSignInClick }: { onSignInClick: () => void }) {
+function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0f172a]">
-      <Navigation onSignInClick={onSignInClick} />
       <main>
         <Hero />
         <ProblemStatement />
@@ -95,8 +96,10 @@ function MainContent() {
   }, [isAuthenticated, user, hasProfile, location, navigate]);
 
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage onSignInClick={() => navigate('/auth')} />} />
+    <>
+      <Navigation onSignInClick={() => navigate('/auth')} />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
       
       <Route path="/auth" element={
         <AuthPage 
@@ -142,21 +145,26 @@ function MainContent() {
         <Route path="registration-approval" element={<RegistrationApprovalPage />} />
         <Route path="email-alerts" element={<EmailAlertsPage />} />
         <Route path="create-event" element={<CreateEventPageVerifier />} />
+        <Route path="user-management" element={<UserManagementPage />} />
       </Route>
 
       {/* Global Fallback Route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }
 
 function App() {
   return (
     <AuthProvider>
+      {/* Global Toast */}
       <BrowserRouter>
         <Toaster position="top-right" richColors theme="dark" />
         <MainContent />
       </BrowserRouter>
+      {/* Floating AI chatbot */}
+      <AthNexusChat />
     </AuthProvider>
   );
 }
