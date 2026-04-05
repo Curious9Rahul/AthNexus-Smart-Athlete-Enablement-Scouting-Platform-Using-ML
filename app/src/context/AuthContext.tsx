@@ -210,6 +210,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [user]);
 
+    // Apply global themes and settings on app load
+    useEffect(() => {
+        const theme = localStorage.getItem('athnexus-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+
+        const accent = localStorage.getItem('athnexus-accent') || '#a8e63d';
+        document.documentElement.style.setProperty('--accent-color', accent);
+
+        const font = localStorage.getItem('athnexus-fontsize') || 'M';
+        const sizes = { S: '14px', M: '16px', L: '18px' };
+        document.documentElement.style.fontSize = sizes[font as 'S' | 'M' | 'L'] || '16px';
+    }, []);
+
     const login = (email: string, password: string): boolean => {
         // Check if credentials match any of the dummy accounts
         const matchedUser = DUMMY_CREDENTIALS.find(

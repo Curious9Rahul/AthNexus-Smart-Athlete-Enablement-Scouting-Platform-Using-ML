@@ -3,8 +3,16 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root, :root[data-theme="dark"] {
     --background: 220 25% 8%;
+    /* theme vars */
+    --bg-primary: #0d1520;
+    --bg-card: #151f2e;
+    --bg-input: #0a1018;
+    --border-theme: #1e2e40;
+    --text-primary: #e0eaf5;
+    --text-muted: #5a7a9a;
+    --accent-color: #a8e63d;
     --foreground: 0 0% 98%;
     --card: 220 20% 12%;
     --card-foreground: 0 0% 98%;
@@ -32,6 +40,36 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 220 15% 20%;
     --sidebar-ring: 84 100% 50%;
+  }
+
+  :root[data-theme="light"] {
+    --background: 0 0% 100%;
+    /* theme vars */
+    --bg-primary: #f0f4f8;
+    --bg-card: #ffffff;
+    --bg-input: #f8fafc;
+    --border-theme: #d0dae6;
+    --text-primary: #1a2a3a;
+    --text-muted: #6a7a8a;
+    --accent-color: #4a9a1a;
+    --foreground: 220 25% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 8%;
+    --primary: 84 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 25% 8%;
+    --muted: 220 15% 90%;
+    --muted-foreground: 220 10% 40%;
+    --accent: 84 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 84 100% 50%;
   }
 }
 

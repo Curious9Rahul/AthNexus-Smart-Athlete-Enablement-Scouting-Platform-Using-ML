@@ -24,7 +24,7 @@ const DashboardSidebar = () => {
         { path: '/verifier/events', label: 'Events Database', icon: Calendar, exact: false },
         { path: '/verifier/email-alerts', label: 'Email Alerts', icon: Mail, exact: false },
         { path: '/verifier/user-management', label: 'User Management', icon: Users2, exact: false },
-        { path: '/settings', label: 'Settings', icon: Settings, exact: false },
+        { path: '/verifier/settings', label: 'Settings', icon: Settings, exact: false },
     ];
 
     const menuItems = user?.role === 'verifier' ? verifierMenuItems : athleteMenuItems;

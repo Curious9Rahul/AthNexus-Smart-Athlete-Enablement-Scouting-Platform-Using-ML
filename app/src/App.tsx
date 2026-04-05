@@ -31,7 +31,7 @@ import EventApprovalPage from './pages/verifier/EventApprovalPage';
 import RegistrationApprovalPage from './pages/verifier/RegistrationApprovalPage';
 import EmailAlertsPage from './pages/verifier/EmailAlertsPage';
 import CreateEventPageVerifier from './pages/verifier/CreateEventPage';
-
+import SettingsPage from './pages/verifier/SettingsPage';
 import { Toaster, toast } from 'sonner';
 import { AthNexusChat } from './components/AthNexusChat';
 import UserManagementPage from './pages/verifier/UserManagementPage';
@@ -146,6 +146,7 @@ function MainContent() {
         <Route path="email-alerts" element={<EmailAlertsPage />} />
         <Route path="create-event" element={<CreateEventPageVerifier />} />
         <Route path="user-management" element={<UserManagementPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
 
       {/* Global Fallback Route */}
