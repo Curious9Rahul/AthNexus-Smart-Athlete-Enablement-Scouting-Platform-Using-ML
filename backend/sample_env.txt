@@ -1,0 +1,22 @@
+# ==========================================
+# SAMPLE .env FILE FORMAT FOR YOUR BACKEND
+# ==========================================
+# Copy these line formats exactly to your actual .env file 
+# and replace the placeholder values with your real credentials. 
+# Make sure there is NO JSON payload, NO extra text, and NO spaces around the '='.
+
+PORT=5000
+CLIENT_URL=http://localhost:5173
+JWT_SECRET=your_super_secret_jwt_string_12345
+
+# --- Google OAuth Credentials ---
+# The GOOGLE_CLIENT_ID should end in .apps.googleusercontent.com
+GOOGLE_CLIENT_ID=your_google_client_id_here.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+
+# --- Database ---
+# The exact URI string provided by MongoDB Atlas
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.exmple.mongodb.net/AthNexus?retryWrites=true&w=majority
+
+# --- Resend Email ---
+RESEND_API_KEY=re_your_actual_resend_api_key_here
