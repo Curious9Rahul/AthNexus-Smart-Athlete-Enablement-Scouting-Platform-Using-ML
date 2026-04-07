@@ -245,3 +245,4 @@ export default function EmailTemplate({ athlete, event, otherEvents = [] }: Emai
         </div>
     );
 }
+

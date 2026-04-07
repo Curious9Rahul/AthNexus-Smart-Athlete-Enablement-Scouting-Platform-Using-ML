@@ -336,3 +336,4 @@ const EventDetailsPage = ({ event, onBack }: Props) => {
 };
 
 export default EventDetailsPage;
+

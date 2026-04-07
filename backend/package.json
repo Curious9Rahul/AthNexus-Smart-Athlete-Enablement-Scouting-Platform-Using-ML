@@ -5,15 +5,10 @@
   "main": "server.cjs",
   "scripts": {
     "start": "node server.cjs",
-    "dev": "nodemon server.cjs"
+    "dev": "nodemon --ignore data/ --ignore data/*.json server.cjs"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "resend": "^3.2.0"
-  }
-}
+    "axios": "^1.14.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

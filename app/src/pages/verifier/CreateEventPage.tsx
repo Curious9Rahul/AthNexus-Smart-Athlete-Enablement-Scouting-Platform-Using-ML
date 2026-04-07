@@ -75,7 +75,7 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white p-6 pt-24 pb-20">
+    <div className="pb-20">
       <div className="max-w-4xl mx-auto space-y-8">
         <Button 
           variant="ghost" 
@@ -340,3 +340,4 @@ export default function CreateEventPage() {
     </div>
   );
 }
+

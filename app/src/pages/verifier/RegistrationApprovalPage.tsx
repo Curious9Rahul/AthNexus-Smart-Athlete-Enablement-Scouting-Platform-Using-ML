@@ -274,7 +274,7 @@ const RegistrationApprovalPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white p-6 pt-24 pb-20">
+    <div className="pb-20">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-12">
@@ -540,3 +540,4 @@ const RegistrationApprovalPage = () => {
 };
 
 export default RegistrationApprovalPage;
+

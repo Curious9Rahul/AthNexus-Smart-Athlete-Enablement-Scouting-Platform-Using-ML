@@ -367,3 +367,4 @@ const EventPage = ({ events, participationRequests, onRequestParticipation, onSu
 };
 
 export default EventPage;
+

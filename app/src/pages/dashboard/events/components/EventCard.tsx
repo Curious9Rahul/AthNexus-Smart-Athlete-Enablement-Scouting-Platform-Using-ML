@@ -1,4 +1,4 @@
-﻿import muLogo from "../assets/mulogo.jpg";
+import muLogo from "../assets/mulogo.jpg";
 import districtLogo from "../assets/dsoimage.jpg";
 import stateLogo from "../assets/statelevel .jpg";
 import nationalLogo from "../assets/national level.jpg";
@@ -88,3 +88,4 @@ const EventCard = ({ event, hasRequested, onDetails, onRequestParticipation }: P
 };
 
 export default EventCard;
+

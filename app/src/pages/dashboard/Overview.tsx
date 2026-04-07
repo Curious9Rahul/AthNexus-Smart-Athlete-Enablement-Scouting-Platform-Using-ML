@@ -1,16 +1,12 @@
 import { Calendar, Trophy, TrendingUp, Zap, Award } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
-type DashboardView = 'overview' | 'events' | 'my-events' | 'analytics' | 'profile' | 'profile-edit';
-
-interface OverviewProps {
-    onNavigate: (view: DashboardView) => void;
-}
-
-const Overview = ({ onNavigate }: OverviewProps) => {
+const Overview = () => {
     const { user } = useAuth();
     const profile = user?.profile;
+    const navigate = useNavigate();
 
     return (
         <div className="space-y-6">
@@ -26,7 +22,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => onNavigate('my-events')}>
+                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => navigate('/dashboard/my-events')}>
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-lg bg-lime-400/20 flex items-center justify-center">
                             <Calendar className="w-6 h-6 text-lime-400" />
@@ -37,7 +33,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
                     <p className="text-3xl font-bold text-white">2</p>
                 </div>
 
-                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => onNavigate('analytics')}>
+                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => navigate('/dashboard/analytics')}>
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center">
                             <Trophy className="w-6 h-6 text-blue-400" />
@@ -47,7 +43,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
                     <p className="text-3xl font-bold text-white">{profile?.medalsWon || 0}</p>
                 </div>
 
-                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => onNavigate('analytics')}>
+                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => navigate('/dashboard/analytics')}>
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
                             <Award className="w-6 h-6 text-orange-400" />
@@ -60,7 +56,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
                     </p>
                 </div>
 
-                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => onNavigate('events')}>
+                <div className="glass-dark rounded-xl p-6 border border-white/10 hover-lift cursor-pointer" onClick={() => navigate('/dashboard/events')}>
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center">
                             <Zap className="w-6 h-6 text-green-400" />
@@ -76,7 +72,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-white">Upcoming Events</h2>
                     <Button
-                        onClick={() => onNavigate('my-events')}
+                        onClick={() => navigate('/dashboard/my-events')}
                         variant="ghost"
                         className="text-lime-400 hover:text-lime-300"
                     >
@@ -134,7 +130,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
                         </div>
                     </div>
                     <Button
-                        onClick={() => onNavigate('analytics')}
+                        onClick={() => navigate('/dashboard/analytics')}
                         className="w-full mt-4 bg-lime-400 hover:bg-lime-500 text-[#0f172a] font-semibold"
                     >
                         View Full Analytics
@@ -158,7 +154,7 @@ const Overview = ({ onNavigate }: OverviewProps) => {
                         </div>
                     </div>
                     <Button
-                        onClick={() => onNavigate('events')}
+                        onClick={() => navigate('/dashboard/events')}
                         className="w-full mt-4 bg-lime-400 hover:bg-lime-500 text-[#0f172a] font-semibold"
                     >
                         Browse Events
@@ -188,3 +184,4 @@ const Overview = ({ onNavigate }: OverviewProps) => {
 };
 
 export default Overview;
+

@@ -275,3 +275,4 @@ const VerifierEventsPage = () => {
 };
 
 export default VerifierEventsPage;
+

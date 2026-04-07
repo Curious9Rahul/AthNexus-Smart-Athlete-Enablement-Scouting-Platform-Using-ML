@@ -1,0 +1,59 @@
+﻿src/components/DashboardSidebar.tsx(4,112): error TS6133: 'BarChart3' is declared but its value is never read.
+src/components/DashboardSidebar.tsx(4,123): error TS6133: 'LogOut' is declared but its value is never read.
+src/components/ui/button-group.tsx(5,27): error TS2307: Cannot find module '@/components/ui/separator' or its corresponding type declarations.
+src/components/ui/field.tsx(6,27): error TS2307: Cannot find module '@/components/ui/separator' or its corresponding type declarations.
+src/components/ui/item.tsx(6,27): error TS2307: Cannot find module '@/components/ui/separator' or its corresponding type declarations.
+src/components/verifier/EmailAlerts.tsx(96,23): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(108,49): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(164,73): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(179,75): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(195,42): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(196,200): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(197,26): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(198,192): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(199,26): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(200,198): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(203,41): error TS2339: Property 'slotsLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(204,77): error TS2339: Property 'slotsLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(204,104): error TS2339: Property 'totalSlots' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(205,29): error TS2339: Property 'slotsLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(205,56): error TS2339: Property 'totalSlots' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(218,103): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(220,44): error TS2339: Property 'date' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(220,67): error TS2339: Property 'time' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(223,51): error TS2339: Property 'prizePool' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(274,68): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(274,89): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(278,44): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(290,91): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(291,44): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(350,93): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/components/verifier/EmailAlerts.tsx(380,109): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/context/AuthContext.tsx(48,7): error TS6133: 'DUMMY_CREDENTIALS' is declared but its value is never read.
+src/pages/Dashboard.tsx(42,31): error TS2322: Type '{ activeView: DashboardView; onViewChange: Dispatch<SetStateAction<DashboardView>>; }' is not assignable to type 'IntrinsicAttributes'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(95,23): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(108,49): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(165,73): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(180,75): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(197,42): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(198,200): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(199,26): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(200,192): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(201,26): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(202,198): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(205,41): error TS2339: Property 'slotsLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(206,77): error TS2339: Property 'slotsLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(206,104): error TS2339: Property 'totalSlots' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(207,29): error TS2339: Property 'slotsLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(207,56): error TS2339: Property 'totalSlots' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(220,103): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(222,44): error TS2339: Property 'date' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(222,67): error TS2339: Property 'time' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(225,51): error TS2339: Property 'prizePool' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(281,68): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(281,89): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(285,44): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(297,91): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(298,44): error TS2339: Property 'hoursLeft' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(357,93): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.
+src/pages/dashboard/email-notifications/EmailNotificationsPage.tsx(387,109): error TS2339: Property 'tournamentName' does not exist on type 'TournamentEmail'.

@@ -8,3 +8,12 @@ build/
 # Ignore databases
 *.db
 backend/deepscan.db
+*.pkl
+backend/ml/Processed_Athlete_Data.csv
+backend/ml/athlete_selector.pkl
+backend/ml/model_features.pkl
+backend/ml/athlete_dataset_v3_92k.csv
+app/public/athlete_dataset_v3_92k.csv
+backend/err.log
+backend/data/*.bak
+app/ts_errors.txt

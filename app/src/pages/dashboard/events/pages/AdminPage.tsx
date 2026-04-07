@@ -1,4 +1,4 @@
-﻿import type { Event, ParticipationRequest, ParticipationRequestStatus } from "../types";
+import type { Event, ParticipationRequest, ParticipationRequestStatus } from "../types";
 
 type Props = {
   events: Event[];
@@ -59,3 +59,4 @@ const AdminPage = ({ events, participationRequests, onUpdateRequestStatus }: Pro
 };
 
 export default AdminPage;
+

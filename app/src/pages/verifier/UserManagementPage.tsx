@@ -271,7 +271,7 @@ export default function UserManagementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white p-6 pt-24 pb-20">
+    <div className="pb-20">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* Header */}
@@ -420,3 +420,4 @@ export default function UserManagementPage() {
     </div>
   );
 }
+

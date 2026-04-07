@@ -197,7 +197,7 @@ select::-webkit-scrollbar-thumb {
   border-radius: 4px;
 }
 
-/* ── Language selector dropdown scrollbar ───────────────────────── */
+/*  Language selector dropdown scrollbar  */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -215,8 +215,8 @@ select::-webkit-scrollbar-thumb {
   background: rgba(132, 204, 22, 0.5);
 }
 
-/* ── Google Translate: hide injected top-banner / toolbar ───────── */
-/* Google appends a fixed bar at the top of the page — suppress it */
+/*  Google Translate: hide injected top-banner / toolbar  */
+/* Google appends a fixed bar at the top of the page  suppress it */
 .skiptranslate iframe,
 .goog-te-banner-frame,
 #goog-gt-tt,

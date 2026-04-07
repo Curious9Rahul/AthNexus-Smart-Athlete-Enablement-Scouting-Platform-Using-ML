@@ -174,7 +174,7 @@ Login to AthNexus to register!`;
     }
 
     return (
-        <div className="min-h-screen bg-[#0f172a] text-white p-6 pt-24 pb-20">
+        <div className="pb-20">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-10">
                     <div className="flex items-center gap-2 text-blue-400 mb-2">
@@ -447,3 +447,4 @@ Login to AthNexus to register!`;
         </div>
     );
 }
+

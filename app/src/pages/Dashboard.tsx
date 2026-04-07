@@ -21,7 +21,7 @@ const Dashboard = () => {
             case 'events':
                 return <EventsPage />;
             case 'my-events':
-                return <MyEvents />;
+                return <MyEvents onNavigate={setActiveView} />;
             case 'analytics':
                 return <Analytics />;
             case 'profile':
@@ -56,3 +56,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

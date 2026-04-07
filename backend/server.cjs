@@ -1,19 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { Resend } = require('resend');
-const fs = require('fs');
-const path = require('path');
 
-dotenv.config();
-
-const app = express();
-const port = process.env.PORT || 5000;
-const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-
-app.use(cors());
-app.use(express.json());
 
 dotenv.config();
 
@@ -24,6 +12,8 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
+const mlRoutes = require('./routes/ml');
+const User = require('./models/User');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -43,6 +33,9 @@ app.use(passport.initialize());
 // Auth Routes
 app.use('/api/auth', authRoutes);
 
+// ML Routes
+app.use('/api/ml', mlRoutes);
+
 // Log all requests
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -57,10 +50,17 @@ if (!fs.existsSync(path.join(__dirname, 'data'))) {
   fs.mkdirSync(path.join(__dirname, 'data'));
 }
 
-// Helper to get events
+// Helper to get events — BOM-safe, crash-safe
 const getEvents = () => {
-  if (fs.existsSync(eventsFilePath)) {
-    return JSON.parse(fs.readFileSync(eventsFilePath, 'utf8'));
+  try {
+    if (fs.existsSync(eventsFilePath)) {
+      const raw = fs.readFileSync(eventsFilePath, 'utf8').replace(/^\uFEFF/, '');
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.error('[DATA] events.json read/parse error — resetting to []:', err.message);
+    // Auto-repair: overwrite with empty array so server stays up
+    try { fs.writeFileSync(eventsFilePath, '[]', 'utf8'); } catch (_) {}
   }
   return [];
 };
@@ -123,21 +123,31 @@ function computeStatus(event) {
   return "COMPLETED";
 }
 
-// Helper to save events
+// Helper to save events — atomic write to prevent corruption
 const saveEvents = (events) => {
-  fs.writeFileSync(eventsFilePath, JSON.stringify(events, null, 2), 'utf8');
+  const tmp = eventsFilePath + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(events, null, 2), 'utf8');
+  fs.renameSync(tmp, eventsFilePath);
 };
 
 // ── Users helpers ──────────────────────────────────────────────
 const usersFilePath = path.join(__dirname, 'data', 'users.json');
 const getUsers = () => {
-  if (fs.existsSync(usersFilePath)) {
-    return JSON.parse(fs.readFileSync(usersFilePath, 'utf8'));
+  try {
+    if (fs.existsSync(usersFilePath)) {
+      const raw = fs.readFileSync(usersFilePath, 'utf8').replace(/^\uFEFF/, '');
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.error('[DATA] users.json read/parse error — resetting to []:', err.message);
+    try { fs.writeFileSync(usersFilePath, '[]', 'utf8'); } catch (_) {}
   }
   return [];
 };
 const saveUsers = (users) => {
-  fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2), 'utf8');
+  const tmp = usersFilePath + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(users, null, 2), 'utf8');
+  fs.renameSync(tmp, usersFilePath);
 };
 
 // ── Luma-style email builders ──────────────────────────────────
@@ -397,68 +407,92 @@ function buildUpcomingReminderEmail(recipientName, event) {
 
 // ── User Management Endpoints ─────────────────────────────────
 
-app.get('/api/admin/users', (req, res) => {
-  res.json(getUsers());
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const users = await User.find({});
+    const mapped = users.map(u => ({
+      athleteId: u._id,
+      name: u.name,
+      email: u.email,
+      sport: u.profile?.sport || '-',
+      status: u.status || 'ACTIVE',
+      joinedAt: u.createdAt,
+      department: u.profile?.department || '-',
+      year: u.profile?.year || 1,
+      totalRegistrations: 0, // Placeholder as relations not built
+      approvedRegistrations: 0,
+      bannedAt: u.bannedAt || null,
+      banReason: u.banReason || null,
+      frozenAt: u.frozenAt || null,
+      frozenReason: u.frozenReason || null
+    }));
+    res.json(mapped);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch users from DB' });
+  }
 });
 
-app.get('/api/admin/users/:id', (req, res) => {
-  const user = getUsers().find(u => u.athleteId === req.params.id);
-  if (user) res.json(user);
-  else res.status(404).json({ error: 'User not found' });
+app.get('/api/admin/users/:id', async (req, res) => {
+  try {
+    const u = await User.findById(req.params.id);
+    if (!u) return res.status(404).json({ error: 'User not found' });
+    res.json(u);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.patch('/api/admin/users/:id/ban', (req, res) => {
-  const { reason } = req.body;
-  const users = getUsers();
-  const idx = users.findIndex(u => u.athleteId === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'User not found' });
-  users[idx].status = 'BANNED';
-  users[idx].bannedAt = new Date().toISOString();
-  users[idx].banReason = reason || null;
-  saveUsers(users);
-  res.json({ success: true });
+app.patch('/api/admin/users/:id/ban', async (req, res) => {
+  try {
+    const { reason } = req.body;
+    await User.findByIdAndUpdate(req.params.id, {
+      status: 'BANNED',
+      bannedAt: new Date(),
+      banReason: reason || null
+    });
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-app.patch('/api/admin/users/:id/unban', (req, res) => {
-  const users = getUsers();
-  const idx = users.findIndex(u => u.athleteId === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'User not found' });
-  users[idx].status = 'ACTIVE';
-  users[idx].bannedAt = null;
-  users[idx].banReason = null;
-  saveUsers(users);
-  res.json({ success: true });
+app.patch('/api/admin/users/:id/unban', async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.params.id, {
+      status: 'ACTIVE',
+      bannedAt: null,
+      banReason: null
+    });
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-app.patch('/api/admin/users/:id/freeze', (req, res) => {
-  const { reason } = req.body;
-  const users = getUsers();
-  const idx = users.findIndex(u => u.athleteId === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'User not found' });
-  users[idx].status = 'FROZEN';
-  users[idx].frozenAt = new Date().toISOString();
-  users[idx].frozenReason = reason || null;
-  saveUsers(users);
-  res.json({ success: true });
+app.patch('/api/admin/users/:id/freeze', async (req, res) => {
+  try {
+    const { reason } = req.body;
+    await User.findByIdAndUpdate(req.params.id, {
+      status: 'FROZEN',
+      frozenAt: new Date(),
+      frozenReason: reason || null
+    });
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-app.patch('/api/admin/users/:id/unfreeze', (req, res) => {
-  const users = getUsers();
-  const idx = users.findIndex(u => u.athleteId === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'User not found' });
-  users[idx].status = 'ACTIVE';
-  users[idx].frozenAt = null;
-  users[idx].frozenReason = null;
-  saveUsers(users);
-  res.json({ success: true });
+app.patch('/api/admin/users/:id/unfreeze', async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.params.id, {
+      status: 'ACTIVE',
+      frozenAt: null,
+      frozenReason: null
+    });
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-app.delete('/api/admin/users/:id', (req, res) => {
-  const users = getUsers();
-  const filtered = users.filter(u => u.athleteId !== req.params.id);
-  if (filtered.length === users.length) return res.status(404).json({ error: 'User not found' });
-  saveUsers(filtered);
-  res.json({ success: true });
+app.delete('/api/admin/users/:id', async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
 app.get('/api/events', (req, res) => {
@@ -642,7 +676,7 @@ app.get('/api/verifier/events/pending', (req, res) => {
   res.json(events);
 });
 
-app.patch('/api/verifier/events/:id/approve', (req, res) => {
+app.patch('/api/verifier/events/:id/approve', async (req, res) => {
   const events = getEvents();
   const index = events.findIndex(e => e.id === req.params.id);
   if (index !== -1) {
@@ -674,7 +708,6 @@ app.patch('/api/verifier/events/:id/approve', (req, res) => {
 });
 
 app.patch('/api/verifier/events/:id/reject', async (req, res) => {
-app.patch('/api/verifier/events/:id/reject', (req, res) => {
   const { reason } = req.body;
   const events = getEvents();
   const index = events.findIndex(e => e.id === req.params.id);
@@ -724,7 +757,6 @@ app.get('/api/verifier/registrations/pending', (req, res) => {
             registeredAt: reg.registeredAt,
             reg_status: reg.reg_status,
             formData: reg.formData || {}
-            registeredAt: reg.registeredAt
           });
         }
       });
@@ -775,9 +807,6 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
       event.registrations[regIndex].processedAt = new Date().toISOString();
       saveEvents(events);
       
-      // Send confirmation email (Luma-style)
-      saveEvents(events);
-      
       // Send confirmation email
       const athleteEmail = event.registrations[regIndex].athleteEmail;
       const athleteName = event.registrations[regIndex].athleteName;
@@ -787,10 +816,6 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/approve', async (req,
             from: `AthNexus <${fromEmail}>`,
             to: athleteEmail,
             subject: `✅ Registration Confirmed — ${event.title}`,
-            html: buildRegistrationApprovedEmail(athleteName, event)
-            from: `AthNexus Alerts <${fromEmail}>`,
-            to: athleteEmail,
-            subject: `✅ Your registration is confirmed — ${event.title}`,
             html: buildTournamentEmailHTML(athleteName, { ...event, tournamentName: event.title, hoursLeft: 0, slotsLeft: 0, totalSlots: 0 })
           });
           console.log(`[RESEND SUCCESS] Approval email sent to ${athleteEmail}`);
@@ -824,20 +849,11 @@ app.patch('/api/verifier/registrations/:eventId/:athleteId/reject', async (req, 
       event.registrations[regIndex].processedAt = new Date().toISOString();
       saveEvents(events);
       
-      // Send rejection email (Luma-style)
-      saveEvents(events);
-      
       // Send rejection email
       const athleteEmail = event.registrations[regIndex].athleteEmail;
       const athleteName = event.registrations[regIndex].athleteName;
       if (athleteEmail) {
         try {
-          await resend.emails.send({
-            from: `AthNexus <${fromEmail}>`,
-            to: athleteEmail,
-            subject: `Update on your registration — ${event.title}`,
-            html: buildRegistrationRejectedEmail(athleteName, event, reason)
-          // Reusing the same helper, though we could make a dedicated one
           await resend.emails.send({
             from: `AthNexus Alerts <${fromEmail}>`,
             to: athleteEmail,

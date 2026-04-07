@@ -22,3 +22,4 @@ const FilterTabs = ({ active, setActive, tabs, ariaLabel = "Event Filters" }: Pr
 };
 
 export default FilterTabs;
+

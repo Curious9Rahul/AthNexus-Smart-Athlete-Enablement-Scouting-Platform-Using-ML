@@ -32,17 +32,11 @@ import RegistrationApprovalPage from './pages/verifier/RegistrationApprovalPage'
 import EmailAlertsPage from './pages/verifier/EmailAlertsPage';
 import CreateEventPageVerifier from './pages/verifier/CreateEventPage';
 import SettingsPage from './pages/verifier/SettingsPage';
+import EventPlayerSelectionPage from './pages/verifier/EventPlayerSelectionPage';
 import { Toaster, toast } from 'sonner';
 import { AthNexusChat } from './components/AthNexusChat';
 import UserManagementPage from './pages/verifier/UserManagementPage';
-
-// Protected Route Component
-import { Toaster, toast } from 'sonner';
-
-/**
- * Cleaned up App.tsx to remove missing Git stash imports
- * and map /dashboard correctly to Dashboard.tsx
- */
+import SmartRankingPage from './pages/verifier/SmartRankingPage';
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
   const { isAuthenticated, user, hasProfile } = useAuth();
@@ -52,8 +46,6 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-  // Typecast bypass for older typescript structures
   const userObj = user as any;
 
   if (allowedRoles && userObj && userObj.role && !allowedRoles.includes(userObj.role)) {
@@ -61,8 +53,6 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
     return <Navigate to="/" replace />;
   }
 
-  // Redirect to profile form if authenticated but no profile (for players)
-  if (user?.role === 'player' && !hasProfile && location.pathname !== '/profile-setup') {
   if (userObj?.role === 'player' && !hasProfile && location.pathname !== '/profile-setup') {
     return <Navigate to="/profile-setup" replace />;
   }
@@ -70,24 +60,18 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   return <>{children}</>;
 };
 
-function LandingPage() {
+// Pages that should render the landing-page-specific footer
+function LandingContent() {
   return (
-    <div className="min-h-screen bg-[#0f172a]">
-function LandingPage({ onSignInClick }: { onSignInClick: () => void }) {
-  return (
-    <div className="min-h-screen bg-[#0f172a]">
-      <Navigation onSignInClick={onSignInClick} />
-      <main>
-        <Hero />
-        <ProblemStatement />
-        <SolutionOverview />
-        <AthleteShowcase />
-        <ExplainableAI />
-        <HowItWorks />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <Hero />
+      <ProblemStatement />
+      <SolutionOverview />
+      <AthleteShowcase />
+      <ExplainableAI />
+      <HowItWorks />
+      <CTA />
+    </main>
   );
 }
 
@@ -96,17 +80,15 @@ function MainContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect after login/signup
-  useEffect(() => {
-    if (isAuthenticated && location.pathname === '/auth') {
-      if (user?.role === 'verifier') {
-        navigate('/verifier/event-approval', { replace: true });
-      } else if (user?.role === 'player') {
+  // Hide footer & show plain bg on inner app pages
+  const isLanding = location.pathname === '/';
+  const isAuthPage = location.pathname === '/auth';
+
   useEffect(() => {
     if (isAuthenticated && location.pathname === '/auth') {
       const userObj = user as any;
       if (userObj?.role === 'verifier') {
-        navigate('/verifier', { replace: true });
+        navigate('/verifier/event-approval', { replace: true });
       } else {
         if (hasProfile) {
           navigate('/dashboard', { replace: true });
@@ -118,101 +100,101 @@ function MainContent() {
   }, [isAuthenticated, user, hasProfile, location, navigate]);
 
   return (
-    <>
-      <Navigation onSignInClick={() => navigate('/auth')} />
+    <div className={isLanding ? 'bg-[#0f172a]' : 'bg-[#0f172a] min-h-screen'}>
+      {/* ── Global Navigation — visible on ALL pages ─────────────────────── */}
+      {!isAuthPage && (
+        <Navigation onSignInClick={() => navigate('/auth')} />
+      )}
+
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-    <Routes>
-      <Route path="/" element={<LandingPage onSignInClick={() => navigate('/auth')} />} />
-      
-      <Route path="/auth" element={
-        <AuthPage 
-          onSuccess={() => {}} 
-          onCancel={() => navigate('/')} 
-        />
-      } />
+        {/* ── Landing ────────────────────────────────────────────────────── */}
+        <Route path="/" element={
+          <>
+            <LandingContent />
+            <Footer />
+          </>
+        } />
 
-      <Route path="/profile-setup" element={
-        <ProtectedRoute allowedRoles={['player']}>
-          <ProfileForm 
-            onComplete={() => navigate('/dashboard')} 
-            onBack={() => {
-              logout();
-              if (hasProfile) {
-                navigate('/dashboard');
-              } else {
-                logout();
-              }
-            }} 
+        {/* ── Auth ───────────────────────────────────────────────────────── */}
+        <Route path="/auth" element={
+          <AuthPage
+            onSuccess={() => {}}
+            onCancel={() => navigate('/')}
           />
-        </ProtectedRoute>
-      } />
+        } />
 
-      {/* ATHLETE ROUTES */}
-      <Route path="/dashboard" element={
-        <ProtectedRoute allowedRoles={['player', 'verifier']}>
-          <DashboardLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Overview onNavigate={() => {}} />} />
-        <Route path="events" element={<EventsPage />} />
-        <Route path="my-events" element={<MyEventsPage />} />
-        <Route path="analytics" element={<Analytics />} />
-        <Route path="create-event" element={<CreateEventPageAthlete />} />
-        <Route path="events/:id" element={<EventDetailPage />} />
-      </Route>
-
-      {/* VERIFIER ROUTES */}
-      <Route path="/verifier" element={
-        <ProtectedRoute allowedRoles={['verifier']}>
-          <VerifierLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Navigate to="/verifier/events" replace />} />
-        <Route path="events" element={<VerifierEventsPage />} />
-        <Route path="event-approval" element={<EventApprovalPage />} />
-        <Route path="registration-approval" element={<RegistrationApprovalPage />} />
-        <Route path="email-alerts" element={<EmailAlertsPage />} />
-        <Route path="create-event" element={<CreateEventPageVerifier />} />
-        <Route path="user-management" element={<UserManagementPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
-      {/* ATHLETE & VERIFIER ROUTES */}
-      <Route path="/dashboard/*" element={
-        <ProtectedRoute allowedRoles={['player', 'verifier']}>
-          <Dashboard />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/verifier/*" element={
-        <ProtectedRoute allowedRoles={['verifier']}>
-            <div className="text-white p-8 text-center mt-20">
-                <h1 className="text-3xl font-bold">Verifier Dashboard</h1>
-                <p className="text-gray-400 mt-4">Welcome! This section is currently under construction pending layout restoration.</p>
-                <div className="mt-8">
-                  <button onClick={() => { logout(); navigate('/'); }} className="bg-lime-400 text-[#0f172a] px-6 py-2 rounded-lg font-bold">Logout</button>
-                </div>
+        {/* ── Profile Setup ──────────────────────────────────────────────── */}
+        <Route path="/profile-setup" element={
+          <ProtectedRoute allowedRoles={['player']}>
+            <div className="pt-16 lg:pt-20">
+              <ProfileForm
+                onComplete={() => navigate('/dashboard')}
+                onBack={() => {
+                  if (hasProfile) {
+                    navigate('/dashboard');
+                  } else {
+                    logout();
+                  }
+                }}
+              />
             </div>
-        </ProtectedRoute>
-      } />
+          </ProtectedRoute>
+        } />
 
-      {/* Global Fallback Route */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-    </>
+        {/* ── Athlete Dashboard ──────────────────────────────────────────── */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute allowedRoles={['player', 'verifier']}>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Overview />} />
+          <Route path="events" element={<EventsPage />} />
+          <Route path="my-events" element={<MyEventsPage />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="create-event" element={<CreateEventPageAthlete />} />
+          <Route path="events/:id" element={<EventDetailPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* ── Verifier Dashboard ─────────────────────────────────────────── */}
+        <Route path="/verifier" element={
+          <ProtectedRoute allowedRoles={['verifier']}>
+            <VerifierLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/verifier/events" replace />} />
+          <Route path="events" element={<VerifierEventsPage />} />
+          <Route path="event-approval" element={<EventApprovalPage />} />
+          <Route path="registration-approval" element={<RegistrationApprovalPage />} />
+          <Route path="email-alerts" element={<EmailAlertsPage />} />
+          <Route path="create-event" element={<CreateEventPageVerifier />} />
+          <Route path="user-management" element={<UserManagementPage />} />
+          <Route path="smart-ranking" element={<SmartRankingPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* ── Event Player Selection ─────────────────────────────────────── */}
+        <Route path="/events/:eventId/select-players" element={
+          <ProtectedRoute allowedRoles={['verifier']}>
+            <EventPlayerSelectionPage />
+          </ProtectedRoute>
+        } />
+
+        {/* ── Fallback ───────────────────────────────────────────────────── */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
   );
 }
 
 function App() {
   return (
     <AuthProvider>
-      {/* Global Toast */}
       <BrowserRouter>
         <Toaster position="top-right" richColors theme="dark" />
         <MainContent />
+        <AthNexusChat />
       </BrowserRouter>
-      {/* Floating AI chatbot */}
-      <AthNexusChat />
     </AuthProvider>
   );
 }

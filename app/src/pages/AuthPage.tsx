@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,12 +15,29 @@ interface AuthPageProps {
 
 const AuthPage = ({ onSuccess, onCancel }: AuthPageProps) => {
     const { login, signup } = useAuth();
+    const [searchParams] = useSearchParams();
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+
+    // Capture OAuth URL Errors
+    useEffect(() => {
+        const errType = searchParams.get('error');
+        const reason = searchParams.get('reason');
+        
+        let msg = '';
+        if (errType === 'account_frozen') msg = 'Your account is currently frozen. Contact support.';
+        else if (errType === 'account_banned') msg = 'Your account has been restricted pending investigation.';
+        else if (errType) msg = 'Authentication failed.';
+        
+        if (msg) {
+            if (reason) msg += ` Reason: "${reason}"`;
+            setError(msg);
+        }
+    }, [searchParams]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -253,3 +271,4 @@ const AuthPage = ({ onSuccess, onCancel }: AuthPageProps) => {
 };
 
 export default AuthPage;
+

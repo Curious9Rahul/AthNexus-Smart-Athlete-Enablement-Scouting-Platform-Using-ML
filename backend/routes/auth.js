@@ -13,6 +13,13 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get('/google/callback', 
   passport.authenticate('google', { session: false, failureRedirect: `${clientUrl}/auth?error=auth_failed` }),
   (req, res) => {
+    // 🔴 Security Gate: Check moderation status before issuing JWT
+    if (req.user.status && req.user.status !== 'ACTIVE') {
+      const reason = req.user.status === 'BANNED' ? req.user.banReason : req.user.frozenReason;
+      const meta = reason ? `&reason=${encodeURIComponent(reason)}` : '';
+      return res.redirect(`${clientUrl}/auth?error=account_${req.user.status.toLowerCase()}${meta}`);
+    }
+
     // Generate JWT
     const payload = {
       id: req.user._id,
@@ -31,8 +38,6 @@ router.get('/google/callback',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
-    // Also pass token back initially via URL query or a special success page.
-    // For pure cookie approach, just redirect home.
     res.redirect(`${clientUrl}/dashboard`);
   }
 );
@@ -41,15 +46,17 @@ router.get('/google/callback',
 router.get('/me', async (req, res) => {
     try {
         const token = req.cookies.token;
-        if (!token) {
-            return res.status(401).json({ isAuthenticated: false });
-        }
+        if (!token) return res.status(401).json({ isAuthenticated: false });
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecret');
         const user = await User.findById(decoded.id).select('-__v');
         
-        if (!user) {
-            return res.status(401).json({ isAuthenticated: false });
+        if (!user) return res.status(401).json({ isAuthenticated: false });
+        
+        // 🔴 Security Gate: Terminate active sessions unconditionally if account isn't ACTIVE
+        if (user.status && user.status !== 'ACTIVE') {
+            res.clearCookie('token');
+            return res.status(403).json({ isAuthenticated: false, error: `Account is ${user.status.toLowerCase()}` });
         }
 
         res.json({ isAuthenticated: true, user });

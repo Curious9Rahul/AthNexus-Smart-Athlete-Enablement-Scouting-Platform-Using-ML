@@ -325,3 +325,4 @@ const SuggestEventModal = ({ isOpen, onClose, onSubmit }: Props) => {
 
 export default SuggestEventModal;
 
+

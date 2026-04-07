@@ -273,3 +273,4 @@ const ProfileView = ({ onBack, onEdit }: ProfileViewProps) => {
 };
 
 export default ProfileView;
+

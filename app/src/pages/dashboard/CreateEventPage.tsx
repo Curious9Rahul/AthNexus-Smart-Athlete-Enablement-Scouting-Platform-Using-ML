@@ -30,6 +30,7 @@ const CreateEventPage = () => {
         end_date: '',
         deadline: '',
         max_participants: '',
+        players_needed: '',
         prize: '',
         image_emoji: '🏃'
     });
@@ -45,7 +46,8 @@ const CreateEventPage = () => {
         setIsSubmitting(true);
         const payload = {
             ...formData,
-            max_participants: parseInt(formData.max_participants as string) || 100
+            max_participants: parseInt(formData.max_participants as string) || 100,
+            players_needed: parseInt(formData.players_needed as string) || 0
         };
 
         const success = await createEvent(payload, user.email, 'athlete');
@@ -226,10 +228,14 @@ const CreateEventPage = () => {
 
                 {/* Extras */}
                 <section>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         <div>
                             <label className="block text-sm font-bold text-gray-400 mb-2">Max Participants *</label>
                             <Input required type="number" min="1" name="max_participants" value={formData.max_participants} onChange={handleChange} className="bg-white/5 border-white/10 text-white" placeholder="e.g. 100" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-lime-400 mb-2">Players to Select *</label>
+                            <Input required type="number" min="1" name="players_needed" value={formData.players_needed} onChange={handleChange} className="bg-white/5 border-lime-500/30 border text-white" placeholder="e.g. 11" help="Admin will select this many + 2 substitutes" />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-400 mb-2">Prize Details</label>
@@ -264,3 +270,4 @@ const CreateEventPage = () => {
 };
 
 export default CreateEventPage;
+

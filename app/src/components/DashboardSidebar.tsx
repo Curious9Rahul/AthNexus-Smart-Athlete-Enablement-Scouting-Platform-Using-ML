@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Trophy, CheckSquare, Users, User, Settings, Mail, Users2, X, MapPin, Activity, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Home, Calendar, Trophy, BarChart3, User, LogOut, Settings } from 'lucide-react';
+import { Home, Calendar, Trophy, CheckSquare, Users, User, Settings, Mail, Users2, X, MapPin, Activity, Award, Brain } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const DashboardSidebar = () => {
@@ -17,12 +15,13 @@ const DashboardSidebar = () => {
         { path: '/dashboard/my-events', label: 'My Events', icon: Trophy, exact: false },
         { path: '/dashboard/events', label: 'Explore Events', icon: Calendar, exact: false },
         { path: '#static-profile', label: 'My Profile', icon: User, exact: false },
-        { path: '/settings', label: 'Settings', icon: Settings, exact: false },
+        { path: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
     ];
 
     const verifierMenuItems = [
         { path: '/verifier/event-approval', label: 'Event Approval', icon: CheckSquare, exact: false },
         { path: '/verifier/registration-approval', label: 'Registration Approval', icon: Users, exact: false },
+        { path: '/verifier/smart-ranking', label: 'Smart Ranking 🤖', icon: Brain, exact: false },
         { path: '/verifier/events', label: 'Events Database', icon: Calendar, exact: false },
         { path: '/verifier/email-alerts', label: 'Email Alerts', icon: Mail, exact: false },
         { path: '/verifier/user-management', label: 'User Management', icon: Users2, exact: false },
@@ -37,20 +36,6 @@ const DashboardSidebar = () => {
         }
         return location.pathname.startsWith(path);
     };
-    return (
-        <aside className="w-64 bg-[#0f172a] border-r border-white/10 flex flex-col h-screen sticky top-0">
-            {/* Logo */}
-            <div className="p-6 border-b border-white/10">
-                <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <div className="w-8 h-8 rounded-lg bg-lime-400 flex items-center justify-center">
-                        <span className="text-[#0f172a] font-bold">S</span>
-                    </div>
-                    <span className="text-white font-bold tracking-tight">
-                        Ath<span className="text-lime-400">Nexus</span>
-                    </span>
-                </Link>
-            </div>
-
     return (
         <aside className="w-64 bg-[#0f172a] border-r border-white/10 flex flex-col h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)] sticky top-16 lg:top-20 shrink-0">
             {/* User Info */}

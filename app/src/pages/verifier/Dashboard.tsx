@@ -68,7 +68,7 @@ const VerifierDashboard = () => {
     }), [athletes]);
 
     return (
-        <div className="min-h-screen bg-[#0f172a] text-white p-6 pt-24 pb-20">
+        <div className="pb-20">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -222,3 +222,4 @@ const VerifierDashboard = () => {
 };
 
 export default VerifierDashboard;
+
