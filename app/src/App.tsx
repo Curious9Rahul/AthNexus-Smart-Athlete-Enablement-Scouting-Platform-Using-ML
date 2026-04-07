@@ -24,6 +24,7 @@ import MyEventsPage from './pages/dashboard/MyEventsPage';
 import Analytics from './pages/dashboard/Analytics';
 import CreateEventPageAthlete from './pages/dashboard/CreateEventPage';
 import EventDetailPage from './pages/dashboard/EventDetailPage';
+import SomaiyaEventsPage from './pages/dashboard/SomaiyaEventsPage';
 
 // Verifier Pages
 import VerifierEventsPage from './pages/verifier/EventsPage';
@@ -153,6 +154,7 @@ function MainContent() {
           <Route path="analytics" element={<Analytics />} />
           <Route path="create-event" element={<CreateEventPageAthlete />} />
           <Route path="events/:id" element={<EventDetailPage />} />
+          <Route path="somaiya-events" element={<SomaiyaEventsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

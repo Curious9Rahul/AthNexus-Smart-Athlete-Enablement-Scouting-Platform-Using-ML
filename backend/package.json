@@ -5,16 +5,21 @@
   "main": "server.cjs",
   "scripts": {
     "start": "node server.cjs",
-    "dev": "nodemon --ignore data/ --ignore data/*.json server.cjs"
+    "dev": "nodemon --ignore data/ --ignore data/*.json server.cjs",
+    "scrape": "node scraper/index.cjs",
+    "scrape:dry": "node scraper/index.cjs --dry-run",
+    "scrape:json": "node scraper/index.cjs --dry-run --json"
   },
   "dependencies": {
     "axios": "^1.14.0",
+    "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.3",
+    "node-cron": "^3.0.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "resend": "^3.2.0"

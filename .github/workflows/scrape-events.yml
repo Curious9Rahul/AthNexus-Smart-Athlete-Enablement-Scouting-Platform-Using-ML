@@ -1,0 +1,54 @@
+# Somaiya Events Scraper — Daily Scheduled Run
+# Runs at 05:30 IST (00:00 UTC) every day
+
+name: Scrape Somaiya Events
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Midnight UTC = 5:30 AM IST
+  workflow_dispatch:       # Allow manual trigger from GitHub UI
+
+jobs:
+  scrape:
+    name: Run Somaiya Events Scraper
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run scraper pipeline
+        working-directory: backend
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          SCRAPER_LOG_LEVEL: INFO
+        run: node scraper/index.cjs
+
+      - name: Upload run logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-logs-${{ github.run_number }}
+          path: backend/scraper/*.log
+          retention-days: 30
+
+      - name: Alert on failure
+        if: failure()
+        run: |
+          echo "::error::Somaiya scraper failed! Check logs for details."
+          # Future: Send Slack/Discord/email alert here
+          # curl -X POST "${{ secrets.ALERT_WEBHOOK_URL }}" \
+          #   -H 'Content-Type: application/json' \
+          #   -d '{"text":"🚨 AthNexus Scraper Failed — run #${{ github.run_number }}"}'

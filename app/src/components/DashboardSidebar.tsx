@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Trophy, CheckSquare, Users, User, Settings, Mail, Users2, X, MapPin, Activity, Award, Brain } from 'lucide-react';
+import { Home, Calendar, Trophy, CheckSquare, Users, User, Settings, Mail, Users2, X, MapPin, Activity, Award, Brain, Globe } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const DashboardSidebar = () => {
@@ -14,6 +14,7 @@ const DashboardSidebar = () => {
         { path: '/dashboard', label: 'Dashboard', icon: Home, exact: true },
         { path: '/dashboard/my-events', label: 'My Events', icon: Trophy, exact: false },
         { path: '/dashboard/events', label: 'Explore Events', icon: Calendar, exact: false },
+        { path: '/dashboard/somaiya-events', label: 'Somaiya Events', icon: Globe, exact: false },
         { path: '#static-profile', label: 'My Profile', icon: User, exact: false },
         { path: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
     ];

@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
 const mlRoutes = require('./routes/ml');
+const scrapedEventsRoutes = require('./routes/scraped-events');
 const User = require('./models/User');
 
 const app = express();
@@ -35,6 +36,9 @@ app.use('/api/auth', authRoutes);
 
 // ML Routes
 app.use('/api/ml', mlRoutes);
+
+// Scraped Events Routes
+app.use('/api/scraped-events', scrapedEventsRoutes);
 
 // Log all requests
 app.use((req, res, next) => {
