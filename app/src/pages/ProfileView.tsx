@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, Trophy, Target, Award, TrendingUp, Activity, Zap, Edit } from 'lucide-react';
+import { ArrowLeft, User, Trophy, Target, Award, TrendingUp, Activity, Zap, Edit, BadgeCheck } from 'lucide-react';
 
 interface ProfileViewProps {
     onBack: () => void;
@@ -82,7 +82,16 @@ const ProfileView = ({ onBack, onEdit }: ProfileViewProps) => {
 
                         {/* Profile Info */}
                         <div className="flex-1 text-center md:text-left">
-                            <h1 className="text-3xl font-bold text-white mb-2">{profile.name}</h1>
+                            <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                                <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
+                                {user?.is_abc_verified && (
+                                    <BadgeCheck 
+                                        className="w-7 h-7 text-blue-500" 
+                                        fill="currentColor" 
+                                        stroke="white" 
+                                    />
+                                )}
+                            </div>
                             <div className="flex flex-wrap gap-3 justify-center md:justify-start mb-4">
                                 <span className="px-3 py-1 rounded-full bg-lime-400/20 text-lime-400 text-sm font-medium">
                                     {profile.sport}

@@ -113,7 +113,7 @@ export function AthNexusChat() {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 150);
   }, [isOpen]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed) return;
 
@@ -128,16 +128,34 @@ export function AthNexusChat() {
     setInput('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5000/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: trimmed,
+          history: messages.filter(m => m.id !== 'welcome')
+        })
+      });
+      const data = await response.json();
+
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: getBotResponse(trimmed),
+        text: data.reply || getBotResponse(trimmed),
         sender: 'bot',
         timestamp: new Date(),
       };
       setIsTyping(false);
       setMessages(prev => [...prev, botMsg]);
-    }, 800);
+    } catch {
+      setIsTyping(false);
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        text: "I'm having trouble connecting to my central brain. " + getBotResponse(trimmed),
+        sender: 'bot',
+        timestamp: new Date(),
+      }]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

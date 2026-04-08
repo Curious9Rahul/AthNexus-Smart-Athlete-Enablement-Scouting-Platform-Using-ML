@@ -14,6 +14,11 @@ const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
 const mlRoutes = require('./routes/ml');
 const scrapedEventsRoutes = require('./routes/scraped-events');
+const digilockerRoutes = require('./routes/digilocker.cjs');
+const credentialsRoutes = require('./routes/credentials.cjs');
+const profileSyncRoutes = require('./routes/profile-sync.cjs');
+const verifyRoutes = require('./routes/verify.cjs');
+const chatRoutes = require('./routes/chat.cjs');
 const User = require('./models/User');
 
 const app = express();
@@ -33,12 +38,22 @@ app.use(passport.initialize());
 
 // Auth Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/auth/digilocker', digilockerRoutes);
 
 // ML Routes
 app.use('/api/ml', mlRoutes);
 
 // Scraped Events Routes
 app.use('/api/scraped-events', scrapedEventsRoutes);
+
+// New Feature Routes
+app.use('/api/credentials', credentialsRoutes);
+app.use('/api/profile', profileSyncRoutes);
+app.use('/api/verify', verifyRoutes);
+app.use('/api/chat', chatRoutes);
+
+// Serve Static Media
+app.use('/media', express.static(path.join(__dirname, 'media')));
 
 // Log all requests
 app.use((req, res, next) => {

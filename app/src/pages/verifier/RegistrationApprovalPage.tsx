@@ -248,6 +248,29 @@ const RegistrationApprovalPage = () => {
     const success = await approveRegistration(eventId, athleteId);
     if (success) {
       toast.success('Registration approved!');
+      
+      // Trigger Credential Issuance Backend Call
+      try {
+        const reg = pendingRegs.find(r => r.eventId === eventId && r.athleteId === athleteId);
+        if (reg) {
+           await fetch('http://localhost:5000/api/credentials/issue', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               // Needs credentials included to pass JWT
+               credentials: 'include',
+               body: JSON.stringify({
+                   user_id: athleteId,
+                   event_id: eventId,
+                   event_name: reg.eventTitle,
+                   event_date: reg.registeredAt 
+               })
+           });
+           toast.success('Credential processing started');
+        }
+      } catch (e) {
+        console.error('Failed to issue credential', e);
+      }
+
       setExpandedKey(null);
       fetchAllRegistrations();
     }

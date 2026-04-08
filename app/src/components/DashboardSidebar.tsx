@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Trophy, CheckSquare, Users, User, Settings, Mail, Users2, X, MapPin, Activity, Award, Brain, Globe } from 'lucide-react';
+import { Home, Calendar, Trophy, CheckSquare, Users, User, Settings, Mail, Users2, X, MapPin, Activity, Award, Brain, Globe, BadgeCheck } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const DashboardSidebar = () => {
@@ -123,9 +123,14 @@ const DashboardSidebar = () => {
                             </div>
 
                             <div className="mt-4">
-                                <h2 className="text-2xl font-bold text-white mb-1">
-                                    {user?.profile?.name || (user?.role === 'verifier' ? 'Verifier' : 'Alex Johnson')}
-                                </h2>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <h2 className="text-2xl font-bold text-white">
+                                        {user?.profile?.name || (user?.role === 'verifier' ? 'Verifier' : 'Alex Johnson')}
+                                    </h2>
+                                    {user?.is_abc_verified && (
+                                        <BadgeCheck className="w-6 h-6 text-blue-500" fill="currentColor" stroke="white" />
+                                    )}
+                                </div>
                                 <p className="text-lime-400 font-medium">
                                     {user?.role === 'verifier' ? 'AthNexus Admin' : (user?.profile?.sport || 'Basketball • Point Guard')}
                                 </p>

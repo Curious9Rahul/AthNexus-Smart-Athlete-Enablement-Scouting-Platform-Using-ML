@@ -38,6 +38,7 @@ import { Toaster, toast } from 'sonner';
 import { AthNexusChat } from './components/AthNexusChat';
 import UserManagementPage from './pages/verifier/UserManagementPage';
 import SmartRankingPage from './pages/verifier/SmartRankingPage';
+import VerifyCertificatePage from './pages/VerifyCertificatePage';
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
   const { isAuthenticated, user, hasProfile } = useAuth();
@@ -123,6 +124,8 @@ function MainContent() {
             onCancel={() => navigate('/')}
           />
         } />
+
+        <Route path="/verify/:credentialId" element={<VerifyCertificatePage />} />
 
         {/* ── Profile Setup ──────────────────────────────────────────────── */}
         <Route path="/profile-setup" element={

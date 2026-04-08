@@ -42,6 +42,14 @@ interface User {
     role: Role;
     profilePicture?: string;
     profile: UserProfile | null;
+    
+    // ABC Verification Fields
+    abc_id?: string;
+    verified_name?: string;
+    verified_college?: string;
+    verified_dob?: string;
+    is_abc_verified?: boolean;
+    is_scoutable?: boolean;
 }
 
 // Dummy credentials for testing (4 different users)

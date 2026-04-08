@@ -2,6 +2,8 @@ import { Calendar, Trophy, TrendingUp, Zap, Award } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { DigiLockerVerify } from '@/components/abc/DigiLockerVerify';
+import { ProfileSync } from '@/components/abc/ProfileSync';
 
 const Overview = () => {
     const { user } = useAuth();
@@ -11,13 +13,24 @@ const Overview = () => {
     return (
         <div className="space-y-6">
             {/* Welcome Header */}
-            <div className="glass-dark rounded-xl p-8 border border-white/10 bg-gradient-to-r from-lime-400/10 to-transparent">
-                <h1 className="text-3xl font-bold text-white mb-2">
-                    Welcome back, {profile?.name || 'Athlete'}! 👋
-                </h1>
-                <p className="text-gray-400">
-                    Your personalized sports management dashboard
-                </p>
+            <div className="glass-dark rounded-xl p-8 border border-white/10 bg-gradient-to-r from-lime-400/10 to-transparent flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                   <h1 className="text-3xl font-bold text-white mb-2">
+                       Welcome back, {user?.verified_name || profile?.name || 'Athlete'}! 👋
+                   </h1>
+                   <p className="text-gray-400 mb-4">
+                       Your personalized sports management dashboard
+                   </p>
+                   {user?.is_scoutable && (
+                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider">
+                           👁️ Scoutable Profile
+                       </span>
+                   )}
+                </div>
+                <div className="flex flex-col gap-3">
+                   <DigiLockerVerify />
+                   <ProfileSync />
+                </div>
             </div>
 
             {/* Quick Stats */}

@@ -1,17 +1,30 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useEvents } from '@/hooks/useEvents';
-import { Calendar, MapPin, Trophy, Inbox, Trash2, Edit } from 'lucide-react';
+import { Calendar, MapPin, Trophy, Inbox, Trash2, Edit, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { CertificateCard } from '@/components/abc/CertificateCard';
 
 const MyEventsPage = () => {
     const { user } = useAuth();
     const { events, loading, cancelRegistration, refreshEvents } = useEvents();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'registrations' | 'created'>('registrations');
+    const [activeTab, setActiveTab] = useState<'registrations' | 'created' | 'certificates'>('registrations');
     const [isCancelling, setIsCancelling] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [certificates, setCertificates] = useState<any[]>([]);
+    const [loadingCerts, setLoadingCerts] = useState(false);
+
+    useEffect(() => {
+        if (activeTab === 'certificates' && user?._id) {
+            setLoadingCerts(true);
+            fetch(`http://localhost:5000/api/credentials/${user._id}`, { credentials: 'include' })
+                .then(r => r.ok ? r.json() : [])
+                .then(data => { setCertificates(Array.isArray(data) ? data : []); setLoadingCerts(false); })
+                .catch(() => setLoadingCerts(false));
+        }
+    }, [activeTab, user]);
 
     const userEmail = user?.email || '';
 
@@ -114,6 +127,17 @@ const MyEventsPage = () => {
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400 rounded-t-full" />
                     )}
                 </button>
+                <button
+                    onClick={() => setActiveTab('certificates')}
+                    className={`pb-4 px-2 font-bold text-sm tracking-wide transition-colors relative flex items-center gap-2 ${
+                        activeTab === 'certificates' ? 'text-lime-400' : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                >
+                    <Award className="w-4 h-4" /> MY CERTIFICATES
+                    {activeTab === 'certificates' && (
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400 rounded-t-full" />
+                    )}
+                </button>
             </div>
 
             {loading ? (
@@ -179,7 +203,7 @@ const MyEventsPage = () => {
                         </button>
                     </div>
                 )
-            ) : (
+            ) : activeTab === 'created' ? (
                 // TAB 2: CREATED EVENTS
                 createdEvents.length > 0 ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -229,6 +253,36 @@ const MyEventsPage = () => {
                         <p className="text-gray-400">You haven't created any events. Did you know you can organize your own tournaments?</p>
                     </div>
                 )
+            ) : (
+                // TAB 3: CERTIFICATES
+                <>
+                    {loadingCerts ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {[1, 2].map(i => (
+                                <div key={i} className="h-40 bg-white/5 rounded-xl border border-white/10 animate-pulse" />
+                            ))}
+                        </div>
+                    ) : certificates.length !== 0 ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {certificates.map(cert => (
+                                <CertificateCard
+                                    key={cert.credentialId}
+                                    credentialId={cert.credentialId}
+                                    eventName={cert.eventName}
+                                    eventDate={cert.eventDate}
+                                    pdfUrl={cert.pdfUrl}
+                                    abcPushStatus={cert.abcPushStatus}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                            <Award className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                            <h3 className="text-xl font-bold text-white mb-2">No Certificates Yet</h3>
+                            <p className="text-gray-400">Certificates will appear here once your participation is approved by organizers.</p>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
